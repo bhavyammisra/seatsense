@@ -97,9 +97,9 @@ class AuthIntegrationTest extends PostgresIntegrationTest {
     void adminEndpointsAreForLibrariansAndAdmins() throws Exception {
         mvc.perform(get("/api/admin/headcount").with(user("s").roles("STUDENT"))).andExpect(status().isForbidden());
         mvc.perform(get("/api/admin/headcount").with(user("g").roles("GATE"))).andExpect(status().isForbidden());
-        // 404 means security let it through; the endpoint itself comes in B1.6
-        mvc.perform(get("/api/admin/headcount").with(user("l").roles("LIBRARIAN"))).andExpect(status().isNotFound());
-        mvc.perform(get("/api/admin/headcount").with(user("a").roles("ADMIN"))).andExpect(status().isNotFound());
+        // B1.6 built the endpoint, so staff now get 200
+        mvc.perform(get("/api/admin/headcount").with(user("l").roles("LIBRARIAN"))).andExpect(status().isOk());
+        mvc.perform(get("/api/admin/headcount").with(user("a").roles("ADMIN"))).andExpect(status().isOk());
     }
 
     @Test
