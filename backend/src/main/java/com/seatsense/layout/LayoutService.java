@@ -82,6 +82,13 @@ public class LayoutService {
             .toList());
     }
 
+    /** One seat with its current state, for answers like "try this seat instead". */
+    @Transactional(readOnly = true)
+    public Optional<SeatView> seatView(String code) {
+        return seats.findByCode(code).flatMap(seat -> seatsOn(seat.getFloorId())
+            .flatMap(all -> all.stream().filter(v -> v.code().equals(code)).findFirst()));
+    }
+
     /**
      * A seat's state for the map: out of service wins over everything, then
      * whatever the session module reports, and FREE otherwise.

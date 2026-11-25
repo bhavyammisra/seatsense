@@ -106,12 +106,14 @@ class AuthIntegrationTest extends PostgresIntegrationTest {
     void gateEndpointsAreForTheGateOnly() throws Exception {
         mvc.perform(post("/api/gate/scan").with(csrf()).with(user("s").roles("STUDENT"))).andExpect(status().isForbidden());
         mvc.perform(post("/api/gate/scan").with(csrf()).with(user("l").roles("LIBRARIAN"))).andExpect(status().isForbidden());
-        mvc.perform(post("/api/gate/scan").with(csrf()).with(user("g").roles("GATE"))).andExpect(status().isNotFound());
+        // S1.5 built the endpoint: the gate gets through security and is told the empty body is invalid
+        mvc.perform(post("/api/gate/scan").with(csrf()).with(user("g").roles("GATE"))).andExpect(status().isBadRequest());
     }
 
     @Test
     void waitlistIsForStudents() throws Exception {
         mvc.perform(get("/api/waitlist/me").with(user("g").roles("GATE"))).andExpect(status().isForbidden());
-        mvc.perform(get("/api/waitlist/me").with(user("s").roles("STUDENT"))).andExpect(status().isNotFound());
+        // B2.3 built the endpoint: the student role gets through security; "s" has no linked student, so 403
+        mvc.perform(get("/api/waitlist/me").with(user("s").roles("STUDENT"))).andExpect(status().isForbidden());
     }
 }

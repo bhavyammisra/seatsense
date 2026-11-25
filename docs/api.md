@@ -241,7 +241,7 @@ Login request:
 
 Request: `{ "floorPref": "2F" }` (`floorPref` may be null for any floor)
 
-Response `201`: `{ "position": 3, "joinedAt": "..." }`. Errors: `ALREADY_INSIDE` if the student is in the library, `ALREADY_WAITING` if they are already on the waitlist.
+Response `201`: same body as `GET /api/waitlist/me` (`status: "WAITING"` and `position`). Errors: `ALREADY_INSIDE` if the student is in the library, `ALREADY_WAITING` if they are already on the waitlist.
 
 ### `GET /api/waitlist/me` (B, B2.2)
 
@@ -249,7 +249,7 @@ Response `200`:
 ```json
 { "status": "OFFERED", "position": 1, "offeredSeat": "3F-H2", "offerExpiresAt": "2026-11-25T18:55:00+05:30" }
 ```
-`status` is `WAITING`, `OFFERED`, `ACCEPTED`, `EXPIRED` or `CANCELLED`.
+`status` is `NONE` (not on the waitlist), `WAITING`, `OFFERED` or `ACCEPTED`. A place that ended (`EXPIRED`, `CANCELLED`, or `DONE` once the student sits down) reads as `NONE`. `position` is set only while `WAITING`.
 
 ### `DELETE /api/waitlist` (B, B2.2)
 Leave the waitlist. Response `204`.

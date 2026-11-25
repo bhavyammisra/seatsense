@@ -6,7 +6,8 @@ package com.seatsense.session;
  */
 public abstract sealed class SessionException extends RuntimeException
     permits SessionException.SeatTaken, SessionException.AlreadyInside, SessionException.SeatUnavailable,
-    SessionException.NotFound {
+    SessionException.NotFound, SessionException.GroupNotAvailable, SessionException.NoBreaksLeft,
+    SessionException.LibraryFull {
 
     private SessionException(String message) {
         super(message);
@@ -80,6 +81,42 @@ public abstract sealed class SessionException extends RuntimeException
         @Override
         public String errorCode() {
             return "NOT_FOUND";
+        }
+    }
+
+    /** 409 GROUP_NOT_AVAILABLE: no block of free seats fits the whole group. */
+    public static final class GroupNotAvailable extends SessionException {
+        public GroupNotAvailable(int size) {
+            super("No " + size + " free seats together right now.");
+        }
+
+        @Override
+        public String errorCode() {
+            return "GROUP_NOT_AVAILABLE";
+        }
+    }
+
+    /** 409 NO_BREAKS_LEFT: the student has used today's breaks. */
+    public static final class NoBreaksLeft extends SessionException {
+        public NoBreaksLeft(int max) {
+            super("All " + max + " breaks for today are used. Choose Leaving instead.");
+        }
+
+        @Override
+        public String errorCode() {
+            return "NO_BREAKS_LEFT";
+        }
+    }
+
+    /** 409 SEAT_TAKEN with no alternative: every seat is taken. */
+    public static final class LibraryFull extends SessionException {
+        public LibraryFull() {
+            super("Every seat is taken right now.");
+        }
+
+        @Override
+        public String errorCode() {
+            return "SEAT_TAKEN";
         }
     }
 }

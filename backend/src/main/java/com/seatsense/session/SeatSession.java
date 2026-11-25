@@ -74,6 +74,19 @@ public class SeatSession {
         this.breakUntil = null;
     }
 
+    /** Starts a break: the seat stays this student's until {@code until}. */
+    void startBreak(Instant until) {
+        this.status = SessionStatus.ON_BREAK;
+        this.breakUntil = until;
+        this.breaksUsed++;
+    }
+
+    /** Back from a break in time. Clears the break end, as V2's CHECK requires. */
+    void returnFromBreak() {
+        this.status = SessionStatus.ACTIVE;
+        this.breakUntil = null;
+    }
+
     public Long getId() {
         return id;
     }

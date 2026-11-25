@@ -1,0 +1,42 @@
+# Render blueprint for the hosted demo (B3.2). See README, "Hosted demo".
+# Sample data only: never point this at real student records.
+services:
+  - type: web
+    name: seatsense
+    runtime: docker
+    plan: free
+    region: singapore
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: SAMPLE_PASSWORD
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: seatsense-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: seatsense-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: seatsense-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: seatsense-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: seatsense-db
+          property: password
+
+databases:
+  - name: seatsense-db
+    plan: free
+    region: singapore
+    postgresMajorVersion: "16"
+    databaseName: seatsense
+    user: seatsense

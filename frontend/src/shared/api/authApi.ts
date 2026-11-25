@@ -15,7 +15,7 @@ function csrfToken(): string {
   return match ? decodeURIComponent(match[1]) : ''
 }
 
-async function ensureCsrf(): Promise<string> {
+export async function ensureCsrf(): Promise<string> {
   if (!csrfToken()) await fetch('/api/public/availability', { credentials: 'same-origin' })
   return csrfToken()
 }
