@@ -90,7 +90,7 @@ public class GateService {
     }
 
     SessionView view(SeatSession session) {
-        return SessionView.of(session, sessions.seatCodeOf(session), session.getBreaksUsed());
+        return SessionView.of(session, sessions.seatCodeOf(session), (int) sessions.breaksUsedToday(session.getStudentId()));
     }
 
     private static String trimmed(String cardId) {

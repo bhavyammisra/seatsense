@@ -271,7 +271,7 @@ public class SessionService implements SeatStateSource {
         return write.execute(status -> {
             SeatSession session = find(sessionId);
             SeatStateMachine.next(seatStateOf(session), SeatEvent.START_BREAK);
-            if (breaksUsedToday(session.getStudentId()) >= settings.maxPerDay()) {
+            if (countBreaksToday(session.getStudentId()) >= settings.maxPerDay()) {
                 throw new SessionException.NoBreaksLeft(settings.maxPerDay());
             }
             Instant now = time.now();
@@ -357,7 +357,12 @@ public class SessionService implements SeatStateSource {
         return session;
     }
 
-    private long breaksUsedToday(Long studentId) {
+    /** Breaks the student has used today, across all of today's sessions (library time). */
+    public long breaksUsedToday(Long studentId) {
+        return read.execute(status -> countBreaksToday(studentId));
+    }
+
+    private long countBreaksToday(Long studentId) {
         Instant startOfDay = LocalDate.now(time.clock()).atStartOfDay(time.clock().getZone()).toInstant();
         return sessions.breaksUsedSince(studentId, startOfDay);
     }
