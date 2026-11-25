@@ -10,6 +10,7 @@ import {
 import type { Floor, SeatState, SeatStates } from '../shared/layout'
 import { useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
+import { LegalFooter } from '../legal/LegalPage'
 import './public.css'
 
 // Public availability site (WORKPLAN B1.4). View only: seats are given out at
@@ -154,6 +155,7 @@ export default function PublicPage() {
           </>
         )}
       </main>
+      <LegalFooter />
     </div>
   )
 }

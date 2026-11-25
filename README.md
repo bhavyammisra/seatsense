@@ -118,6 +118,8 @@ Things to know about the free plan:
 - The free database expires 30 days after it is created. Create the blueprint close to the presentation date, or move to a paid plan.
 - Only sample data goes here. The simulator is on so the demo script works; reset it from the dashboard after rehearsing.
 
+The site has a privacy policy at `/privacy` and terms at `/terms`, linked from the public page. Set a strong `SAMPLE_PASSWORD`: anyone on the internet can reach the login.
+
 Every push to `main` redeploys automatically.
 
 ## Demo script
