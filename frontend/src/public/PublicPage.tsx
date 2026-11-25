@@ -11,6 +11,7 @@ import type { Floor, SeatState, SeatStates } from '../shared/layout'
 import { useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
 import './public.css'
+import { clockTime, predictionFor, predictionSource, usePredictions } from './predictions'
 import { LegalLinks } from '../legal/LegalPages'
 
 // Public availability site (WORKPLAN B1.4). View only: seats are given out at
@@ -31,6 +32,7 @@ export default function PublicPage() {
   const [floorId, setFloorId] = useState<string | null>(null)
   const [map, setMap] = useState<{ floor: Floor; states: SeatStates } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const predictions = usePredictions()
 
   useEffect(() => {
     let cancelled = false
@@ -138,9 +140,22 @@ export default function PublicPage() {
                   <span className="public-floor-bar" aria-hidden="true">
                     <span style={{ width: `${f.total ? ((f.total - f.free) / f.total) * 100 : 0}%` }} />
                   </span>
+                  {(() => {
+                    const p = predictionFor(predictions, f.id, f.free)
+                    return p?.freesUpAround ? (
+                      <span className="public-floor-usual">Usually frees up around {clockTime(p.freesUpAround)}</span>
+                    ) : null
+                  })()}
                 </button>
               ))}
             </nav>
+            {(() => {
+              const shown = availability.floors
+                .map((f) => predictionFor(predictions, f.id, f.free))
+                .filter((p) => p !== null)
+              const source = predictionSource(shown)
+              return source ? <p className="public-note public-usual-source">{source}</p> : null
+            })()}
 
             <section className="public-map card" aria-label="Seat map">
               {map && map.floor.id === floorId ? (

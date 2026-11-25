@@ -197,7 +197,7 @@ Take them in this order unless we agree otherwise.
 
 | Bhavyam | Shefali |
 |---|---|
-| [ ] B4.1 Occupancy snapshots + predictions ("usually frees up around") | [ ] S4.1 Seat preferences (power, window, zone) feeding best-seat ranking |
+| [x] B4.1 Occupancy snapshots + predictions ("usually frees up around") | [ ] S4.1 Seat preferences (power, window, zone) feeding best-seat ranking |
 | [ ] B4.2 "Tell me when Floor N has 5+ free" alerts | [ ] S4.2 Found items: notify last occupant |
 | [ ] B4.3 Analytics heatmap, "saw FULL" demand count | [ ] S4.3 Seat report button and staff sweep mode |
 | [ ] B4.4 Fire-drill headcount view | [ ] S4.4 Accessible reserved seats |

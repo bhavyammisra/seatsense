@@ -145,13 +145,14 @@ Response `200`:
 }
 ```
 
-### `GET /api/public/prediction` (B, stretch B4.1)
+### `GET /api/public/predictions` (B, stretch B4.1)
 
 Response `200`:
 ```json
-{ "usuallyFreesAround": "19:15", "basedOnWeeks": 4 }
+{ "minFree": 5,
+  "floors": [ { "floorId": "3F", "freesUpAround": "19:15:00", "weeksOfData": 4, "sample": false } ] }
 ```
-When there is not enough history, both fields are `null`. Never invent a value.
+For today's weekday, each 15-minute slot gets the average number of free seats seen in that slot on the same weekday over the last 4 weeks (from `occupancy_snapshot`, stored every 5 minutes). `freesUpAround` is the first slot later today, before the floor closes, where that average reaches `minFree`. With no history `freesUpAround` is `null` and `weeksOfData` is `0`: never invent a value. `sample` is `true` when any of the history is simulator SAMPLE data, and the screen must then say so.
 
 ---
 
@@ -298,6 +299,7 @@ Request: `{ "seat": "3F-C12", "description": "Black phone charger" }`. Response 
 | `POST /api/sim/rush` | `{ "scenario": "EXAM_EVENING" }` | Sample students fill the library floor by floor. |
 | `POST /api/sim/clock` | `{ "advanceMinutes": 30 }` | Moves the server clock forward, so breaks and offers expire on stage. |
 | `POST /api/sim/reset` | none | Ends every session and clears waitlists. |
+| `POST /api/sim/history` | none | Replaces the SAMPLE occupancy history with 4 invented weeks (marked `is_sample`), for predictions and the heatmap. Real snapshots are not touched. |
 
 These endpoints must not exist outside the `dev` profile.
 

@@ -48,3 +48,8 @@ export function simClock(advanceMinutes: number): Promise<unknown> {
 export function simReset(): Promise<{ sessionsEnded: number }> {
   return call('POST', '/api/sim/reset')
 }
+
+/** Replaces the SAMPLE occupancy history with 4 invented weeks, for predictions and the heatmap (B4.1). */
+export function simHistory(): Promise<{ snapshots: number; sample: boolean }> {
+  return call('POST', '/api/sim/history')
+}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { fetchMe, login, logout, type Me } from '../shared/api/authApi'
-import { setOutOfService, simClock, simReset, simRush, simulatorAvailable } from '../shared/api/adminApi'
+import { setOutOfService, simClock, simHistory, simReset, simRush, simulatorAvailable } from '../shared/api/adminApi'
 import {
   fetchAvailability,
   fetchFloors,
@@ -320,6 +320,16 @@ function Dashboard() {
               onClick={() => runDemo(simReset, 'Everyone has left and the waitlist is empty.')}
             >
               Reset
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={demoBusy}
+              onClick={() =>
+                runDemo(simHistory, '4 weeks of sample history written. Predictions and the heatmap now use it.')
+              }
+            >
+              Sample history
             </button>
           </div>
         </section>

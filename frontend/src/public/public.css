@@ -128,6 +128,16 @@
   color: var(--ink-3);
 }
 
+/* B4.1: shown only when a floor is short of seats and there is history behind it. */
+.public-floor-usual {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.public-usual-source {
+  margin-top: calc(-1 * var(--space-3));
+}
+
 /* How full the floor is: the filled part is taken seats. */
 .public-floor-bar {
   height: 6px;

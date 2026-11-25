@@ -105,6 +105,14 @@ export async function fetchAvailability(): Promise<Availability> {
 
 export type { ApiFloor }
 
+/** "Seats usually free up around X" for one floor (B4.1). freesUpAround is "HH:mm:ss" or null. */
+export type FloorPrediction = { floorId: string; freesUpAround: string | null; weeksOfData: number; sample: boolean }
+export type Predictions = { minFree: number; floors: FloorPrediction[] }
+
+export async function fetchPredictions(): Promise<Predictions> {
+  return getJson<Predictions>('/api/public/predictions')
+}
+
 export type Headcount = { inside: number; floors: { id: string; inside: number }[]; onBreak: number }
 
 /** People seated and on break, per floor. Librarian and admin only. */
