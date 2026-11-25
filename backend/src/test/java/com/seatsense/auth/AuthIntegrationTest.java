@@ -113,6 +113,7 @@ class AuthIntegrationTest extends PostgresIntegrationTest {
     @Test
     void waitlistIsForStudents() throws Exception {
         mvc.perform(get("/api/waitlist/me").with(user("g").roles("GATE"))).andExpect(status().isForbidden());
-        mvc.perform(get("/api/waitlist/me").with(user("s").roles("STUDENT"))).andExpect(status().isNotFound());
+        // B2.3 built the endpoint: the student role gets through security; "s" has no linked student, so 403
+        mvc.perform(get("/api/waitlist/me").with(user("s").roles("STUDENT"))).andExpect(status().isForbidden());
     }
 }

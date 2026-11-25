@@ -43,11 +43,30 @@ spring:
     password: ${POSTGRES_PASSWORD}
 
 ---
-# dev: local plus demo-only features (simulator endpoints, B3.1). Never use it on a shared server.
+# dev: local plus demo-only features (simulator endpoints, B3.1). Never use it on a server with real data.
 spring:
   config:
     activate:
       on-profile: dev
+
+---
+# cloud: the hosted demo (B3.2, Dockerfile and render.yaml). Sample data only.
+# The database and the public address come from the host's environment.
+spring:
+  config:
+    activate:
+      on-profile: cloud
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+server:
+  port: ${PORT:8080}
+  # Render ends HTTPS at its proxy; trust its X-Forwarded-* headers so the app knows it is on https.
+  forward-headers-strategy: framework
+seatsense:
+  # Render sets RENDER_EXTERNAL_URL to the service's https address.
+  ws-allowed-origins: ${RENDER_EXTERNAL_URL:http://localhost:[*]}
 
 ---
 # test: integration tests. The database comes from Testcontainers (see PostgresIntegrationTest).

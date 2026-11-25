@@ -32,7 +32,7 @@ type SeatUpdate = { code: string; state: SeatState; at: string }
 type Screen =
   | { kind: 'idle' }
   | { kind: 'gather'; leader: StudentView; lastSeat: string | null; size: number; members: StudentView[] }
-  | { kind: 'pick'; students: StudentView[]; lastSeat: string | null }
+  | { kind: 'pick'; students: StudentView[]; lastSeat: string | null; heldSeat?: string | null }
   | { kind: 'exit'; student: StudentView; session: SessionView }
   | { kind: 'done'; title: string; codes: string[]; lines: string[] }
 
@@ -74,7 +74,8 @@ function Kiosk() {
         }
         return { ...current, members }
       }
-      if (scan.mode === 'ENTRY') return { kind: 'pick', students: [scan.student], lastSeat: scan.lastSeat }
+      if (scan.mode === 'ENTRY')
+        return { kind: 'pick', students: [scan.student], lastSeat: scan.lastSeat, heldSeat: scan.heldSeat }
       if (scan.mode === 'EXIT' && scan.session) return { kind: 'exit', student: scan.student, session: scan.session }
       return {
         kind: 'done',
@@ -122,6 +123,7 @@ function Kiosk() {
             key={screen.students.map((s) => s.id).join('-')}
             students={screen.students}
             lastSeat={screen.lastSeat}
+            heldSeat={screen.heldSeat ?? null}
             floors={floors}
             availability={availability}
             onGroup={(size) =>
@@ -190,6 +192,7 @@ function Gather({ screen, onCancel }: { screen: Extract<Screen, { kind: 'gather'
 function Picker({
   students,
   lastSeat,
+  heldSeat,
   floors,
   availability,
   onGroup,
@@ -198,6 +201,7 @@ function Picker({
 }: {
   students: StudentView[]
   lastSeat: string | null
+  heldSeat: string | null
   floors: ApiFloor[]
   availability: Availability
   onGroup: (size: number) => void
@@ -282,13 +286,13 @@ function Picker({
     if (countdown <= 0) {
       if (!autoFired.current) {
         autoFired.current = true
-        void submit({ type: 'BEST' })
+        void submit(heldSeat ? { type: 'SEAT', seat: heldSeat } : { type: 'BEST' })
       }
       return
     }
     const timer = setTimeout(() => setCountdown((c) => (c === null ? null : c - 1)), 1000)
     return () => clearTimeout(timer)
-  }, [countdown, submit])
+  }, [countdown, submit, heldSeat])
 
   const stopCountdown = () => setCountdown(null)
 
@@ -326,7 +330,9 @@ function Picker({
               {students.length > 1 && ` and ${students.length - 1} more`}
             </h1>
             <p className="muted">
-              {countdown !== null
+              {heldSeat
+                ? `Seat ${heldSeat} is held for you from the waitlist.${countdown !== null ? ` Taking it in ${countdown} s.` : ''}`
+                : countdown !== null
                 ? `Picking the best seat for you in ${countdown} s. Tap anywhere to choose yourself.`
                 : groupSize > 1
                   ? `Tap a free seat and we will fill ${groupSize} together.`
@@ -407,7 +413,17 @@ function Picker({
             <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={busy}>
               Cancel
             </button>
-            {groupSize === 1 && lastSeat && (
+            {groupSize === 1 && heldSeat && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={busy}
+                onClick={() => submit({ type: 'SEAT', seat: heldSeat })}
+              >
+                Take my held seat ({heldSeat})
+              </button>
+            )}
+            {groupSize === 1 && lastSeat && !heldSeat && (
               <button
                 type="button"
                 className="btn btn-ghost"

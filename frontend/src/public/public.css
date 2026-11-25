@@ -190,3 +190,7 @@
     padding: var(--space-4) var(--space-3);
   }
 }
+
+.public-join {
+  margin-top: var(--space-2);
+}
