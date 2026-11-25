@@ -15,7 +15,9 @@ import com.seatsense.auth.AppUser;
 import com.seatsense.auth.AppUserRepository;
 import com.seatsense.auth.Role;
 import com.seatsense.common.TimeProvider;
+import com.seatsense.session.EndReason;
 import com.seatsense.session.SeatSession;
+import com.seatsense.session.SessionEvents.SeatFreed;
 import com.seatsense.session.SeatState;
 import com.seatsense.session.SessionException;
 import com.seatsense.session.SessionService;
@@ -158,6 +160,37 @@ class WaitlistServiceTest extends PostgresIntegrationTest {
 
         assertThat(waitlist.placeOf(student(16)).status()).isEqualTo("WAITING");
         assertThat(waitlist.placeOf(student(17)).offeredSeat()).isEqualTo("2F-D5");
+    }
+
+    @Test
+    void positionCountsOnlyPeopleWaitingForSeatsYouCouldTake() {
+        waitlist.join(student(16), "3F");
+        Place secondFloor = waitlist.join(student(17), "2F");
+        Place anyFloor = waitlist.join(student(18), null);
+
+        assertThat(secondFloor.position()).isEqualTo(1); // the 3F student is not after 2F seats
+        assertThat(anyFloor.position()).isEqualTo(3);
+    }
+
+    @Test
+    void seatsFreedByTheClosingResetAreNotOffered() {
+        waitlist.join(student(16), null);
+
+        waitlist.onSeatFreed(new SeatFreed("2F-D2", "2F", EndReason.CLOSING, time.now()));
+
+        assertThat(waitlist.placeOf(student(16)).status()).isEqualTo("WAITING");
+        assertThat(waitlist.activeHolds()).doesNotContainKey("2F-D2");
+    }
+
+    @Test
+    void anOfferThatRanOutCannotBeAcceptedBeforeTheJobClearsIt() {
+        waitlist.join(student(16), null);
+        freeUp("2F-D3", 20);
+
+        time.advance(Duration.ofMinutes(16));
+
+        assertThatThrownBy(() -> waitlist.accept(student(16)))
+            .isInstanceOfSatisfying(WaitlistException.class, e -> assertThat(e.errorCode()).isEqualTo("NO_OFFER"));
     }
 
     @Test

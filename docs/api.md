@@ -249,7 +249,7 @@ Response `200`:
 ```json
 { "status": "OFFERED", "position": 1, "offeredSeat": "3F-H2", "offerExpiresAt": "2026-11-25T18:55:00+05:30" }
 ```
-`status` is `NONE` (not on the waitlist), `WAITING`, `OFFERED` or `ACCEPTED`. A place that ended (`EXPIRED`, `CANCELLED`, or `DONE` once the student sits down) reads as `NONE`. `position` is set only while `WAITING`.
+`status` is `NONE` (not on the waitlist), `WAITING`, `OFFERED` or `ACCEPTED`. A place that ended (`EXPIRED`, `CANCELLED`, or `DONE` once the student sits down) reads as `NONE`. `position` is set only while `WAITING`: 1 plus the number of students who joined earlier and want a seat this student could also take (the same floor, or any floor; for "any floor", everyone ahead).
 
 ### `DELETE /api/waitlist` (B, B2.2)
 Leave the waitlist. Response `204`.

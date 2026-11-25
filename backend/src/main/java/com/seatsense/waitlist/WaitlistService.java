@@ -4,6 +4,7 @@ import com.seatsense.common.TimeProvider;
 import com.seatsense.layout.FloorRepository;
 import com.seatsense.layout.Seat;
 import com.seatsense.layout.SeatRepository;
+import com.seatsense.session.EndReason;
 import com.seatsense.session.SeatHoldSource;
 import com.seatsense.session.SessionEvents.SeatFreed;
 import com.seatsense.session.SessionEvents.SeatTaken;
@@ -122,6 +123,7 @@ public class WaitlistService implements SeatHoldSource {
             .filter(e -> e.getStatus() == WaitlistStatus.OFFERED)
             .orElseThrow(WaitlistException::noOffer);
         SeatHold hold = holds.findByStudentIdAndStatus(studentId, SeatHold.ACTIVE)
+            .filter(h -> !h.getExpiresAt().isBefore(time.now())) // ran out; expireHolds() passes it on shortly
             .orElseThrow(WaitlistException::noOffer);
         Instant until = time.now().plus(holdLength);
         entry.accept(until);
@@ -149,6 +151,9 @@ public class WaitlistService implements SeatHoldSource {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onSeatFreed(SeatFreed freed) {
+        if (freed.reason() == EndReason.CLOSING) {
+            return; // the floor has just closed: nobody can walk over to the seat
+        }
         seats.findByCodeForUpdate(freed.seatCode()).ifPresent(this::offerToNext);
     }
 
@@ -243,7 +248,7 @@ public class WaitlistService implements SeatHoldSource {
 
     private Place place(WaitlistEntry entry) {
         Integer position = entry.getStatus() == WaitlistStatus.WAITING
-            ? (int) entries.countAheadOf(entry.getJoinedAt()) + 1
+            ? (int) entries.countAheadOf(entry.getJoinedAt(), entry.getFloorPref()) + 1
             : null;
         String seat = entry.getOfferedSeatId() == null ? null
             : seats.findById(entry.getOfferedSeatId()).map(Seat::getCode).orElse(null);
