@@ -50,7 +50,7 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
 ### Bhavyam (needs Docker)
 - [ ] **B0.1 Branch protection.** GitHub Settings → Branches → protect `main`: require a pull request with 1 approval, require CI to pass (once B0.5 exists). Only the repo owner can do this.
   - Needs: nothing.
-- [ ] **B0.2 Backend skeleton.** Spring Boot 3.5.x, Java 21, Maven wrapper, group `com.seatsense`. Dependencies: Web, Data JPA, Validation, Security, WebSocket, Flyway, PostgreSQL driver, Actuator, Testcontainers, JUnit 5. Empty packages from PROJECT.md Section 8. `common/TimeProvider` (injectable clock, with a test-controllable implementation). Security temporarily permits all requests.
+- [x] **B0.2 Backend skeleton.** Spring Boot 3.5.x, Java 21, Maven wrapper, group `com.seatsense`. Dependencies: Web, Data JPA, Validation, Security, WebSocket, Flyway, PostgreSQL driver, Actuator, Testcontainers, JUnit 5. Empty packages from PROJECT.md Section 8. `common/TimeProvider` (injectable clock, with a test-controllable implementation). Security temporarily permits all requests.
   - Needs: nothing.
   - Done when: `./mvnw verify` passes and `/actuator/health` responds.
 - [ ] **B0.3 Local database.** `docker-compose.yml` with Postgres 16, `application.yml` profiles `local`, `test`, `dev`, and `.env.example`. README section "Run the backend".
