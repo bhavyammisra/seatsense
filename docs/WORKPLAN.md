@@ -99,7 +99,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S1.2, S1.3, B1.1.
 - [ ] **S1.5 Gate endpoints.** `POST /api/gate/scan` (decides ENTRY or EXIT from whether an open session exists), `POST /api/sessions`, `POST /api/sessions/{id}/exit` with LEAVE.
   - Needs: S1.4.
-- [ ] **S1.6 SeatMap component.** Shared SVG map: renders seats from the layout API at their x, y, shows all five states distinguishable by shape or pattern as well as colour, supports click to select, and accepts live updates. Used by kiosk, public site and dashboard.
+- [x] **S1.6 SeatMap component.** Shared SVG map: renders seats from the layout API at their x, y, shows all five states distinguishable by shape or pattern as well as colour, supports click to select, and accepts live updates. Used by kiosk, public site and dashboard.
   - Needs: S0.1 (use mock data until S1.1 lands).
 - [ ] **S1.7 Scanner page.** `/scanner` on the phone: camera reads the ID barcode or QR and posts to `/api/gate/scan`. Manual ID entry as a fallback.
   - Needs: S0.1.

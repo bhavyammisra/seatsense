@@ -1,0 +1,323 @@
+.kiosk {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.kiosk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: var(--accent);
+  flex: none;
+}
+
+.brand-name {
+  font-weight: 600;
+}
+
+.brand-place {
+  color: var(--ink-3);
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sample-tag {
+  flex: none;
+  font-size: 0.75rem;
+  color: var(--warn);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+}
+
+.kiosk-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-5) 140px;
+  display: grid;
+  /* minmax(0, 1fr) lets the column shrink below the seat map's width, so only
+     the map scrolls sideways and the page never does. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  align-content: start;
+}
+
+.muted {
+  color: var(--ink-2);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+/* Welcome and group size */
+.kiosk-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.kiosk-welcome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  flex: none;
+}
+
+.group-size {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.group-size legend {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  margin-bottom: var(--space-2);
+  padding: 0;
+}
+
+.group-size-options {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.group-size-option {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.group-size-option[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+/* Floor tabs */
+.floor-tabs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.floor-tab {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3);
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.floor-tab:hover {
+  border-color: var(--line-strong);
+}
+
+.floor-tab[aria-current='true'] {
+  border-color: var(--accent);
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+.floor-tab-name {
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.floor-tab-free {
+  font-size: 0.8125rem;
+  color: var(--ok);
+}
+
+.floor-tab[data-full] .floor-tab-free {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .floor-tabs {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(118px, 1fr);
+    overflow-x: auto;
+  }
+}
+
+/* Map card */
+.kiosk-map {
+  padding: var(--space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.floor-full-note {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Bottom bar, like the "Pay" bar in ticket apps */
+.kiosk-bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 16px rgb(0 0 0 / 0.06);
+}
+
+.kiosk-bar-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.kiosk-bar-summary {
+  min-width: 0;
+}
+
+.kiosk-bar-codes {
+  font-size: 1.125rem;
+}
+
+.notice {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.kiosk-bar-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .kiosk-header {
+    padding: var(--space-3) var(--space-4);
+  }
+  .brand-place {
+    display: none;
+  }
+  .kiosk-main {
+    padding: var(--space-4) var(--space-4) 180px;
+  }
+  .kiosk-map {
+    padding: var(--space-4) var(--space-3);
+  }
+  .kiosk-bar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3) var(--space-4);
+  }
+  .kiosk-bar-actions .btn {
+    flex: 1;
+    padding: 0 var(--space-3);
+  }
+}
+
+/* Confirmation "ticket" */
+.kiosk-done {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  padding-top: var(--space-6);
+}
+
+.ticket {
+  width: min(420px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+  text-align: center;
+  border-top: 6px solid var(--accent);
+}
+
+.ticket-label {
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+
+.ticket-code {
+  font-size: 2.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  word-spacing: 0.3em;
+}
+
+.ticket-meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-top: 1px dashed var(--line-strong);
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+.ticket-meta dt {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.ticket-meta dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.ticket-foot {
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}

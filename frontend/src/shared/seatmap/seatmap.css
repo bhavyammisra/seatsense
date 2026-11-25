@@ -1,0 +1,276 @@
+.seatmap {
+  --seat: 30px;
+  --seat-gap: 6px;
+  --label: 22px;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .seatmap {
+    --seat: 26px;
+    --seat-gap: 4px;
+  }
+}
+
+/* The map can be wider than a phone. Only the map scrolls sideways, never the page. */
+.seatmap-scroll {
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  -webkit-overflow-scrolling: touch;
+}
+
+.seatmap-inner {
+  width: max-content;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-5);
+}
+
+.seatmap-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.seatmap-section-head h3 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+}
+
+.seatmap-section-head p {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  flex: 1;
+}
+
+.seatmap-section-free {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ok);
+  white-space: nowrap;
+}
+
+.seatmap-section-free[data-none] {
+  color: var(--danger);
+}
+
+/* Furniture, drawn behind the seats. */
+.fixture {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Long reading table with the dark centre divider seen in the library. */
+.fixture[data-kind='table'] {
+  margin: 4px calc(var(--seat-gap) * -0.5);
+  background: var(--wood);
+  border: 1px solid var(--wood-edge);
+  border-radius: 3px;
+}
+
+.fixture[data-kind='table']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  background: var(--divider);
+}
+
+.fixture[data-kind='table'] span {
+  display: none;
+}
+
+/* Counter facing a rail, wall or window: a line with what it faces. */
+.fixture[data-kind='counter'] {
+  align-items: flex-end;
+  padding-bottom: 6px;
+  border-bottom: 3px solid var(--wood-edge);
+  margin: 0 calc(var(--seat-gap) * -0.5);
+}
+
+/* Glass group room. */
+.fixture[data-kind='room'] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2px 6px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius);
+  margin: -2px;
+}
+
+/* Area shown on the map that cannot be booked. */
+.fixture[data-kind='area'] {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--surface-sunk) 0 6px,
+    transparent 6px 12px
+  );
+  color: var(--ink-2);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+}
+
+.seatmap-grid {
+  display: grid;
+  gap: var(--seat-gap);
+  justify-content: center;
+}
+
+.seatmap-rowlabel {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+/* The floor's fixed landmark plays the part of the cinema screen. */
+.seatmap-landmark {
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 3px solid var(--line-strong);
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Seats. Each state differs in fill AND outline style, so colour is never
+   the only cue: free = outlined, selected = solid, taken = solid grey with a
+   strike, on break = dashed, held = striped, out of service = dotted. */
+.seat {
+  position: relative;
+  width: var(--seat);
+  height: var(--seat);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm) var(--radius-sm) 2px 2px;
+  border: 1.5px solid var(--seat-free);
+  background: var(--seat-free-bg);
+  color: var(--seat-free);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  cursor: default;
+  transition: background-color 100ms ease, color 100ms ease, transform 100ms ease;
+}
+
+.seat[data-state='FREE']:not(:disabled) {
+  cursor: pointer;
+}
+
+.seat[data-state='FREE']:not(:disabled):hover {
+  background: var(--seat-free);
+  color: var(--seat-free-bg);
+}
+
+.seat[data-state='SELECTED'] {
+  background: var(--seat-selected);
+  border-color: var(--seat-selected);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+
+.seat[data-state='TAKEN'] {
+  background: var(--seat-taken);
+  border-color: var(--seat-taken);
+  color: transparent;
+}
+
+.seat[data-state='TAKEN']::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  background: linear-gradient(135deg, transparent 46%, var(--seat-taken-ink) 46%, var(--seat-taken-ink) 54%, transparent 54%);
+}
+
+.seat[data-state='ON_BREAK'] {
+  border-style: dashed;
+  border-color: var(--seat-break);
+  background: var(--seat-break-bg);
+  color: var(--seat-break);
+}
+
+.seat[data-state='HELD'] {
+  border-color: var(--seat-held);
+  color: var(--seat-held);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--seat-held-bg) 0 4px,
+    var(--surface) 4px 7px
+  );
+}
+
+.seat[data-state='OUT_OF_SERVICE'] {
+  border-style: dotted;
+  border-color: var(--seat-off);
+  background: transparent;
+  color: var(--seat-off);
+}
+
+/* Charging point: a short bar under the seat number. */
+.seat[data-power]::before {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  width: 8px;
+  height: 2px;
+  margin-left: -4px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.seat[data-state='TAKEN'][data-power]::before {
+  display: none;
+}
+
+/* Legend */
+.seat-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.seat-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.seat-swatch {
+  --seat: 18px;
+  font-size: 0;
+}
+
+.seat-swatch[data-state='TAKEN']::after {
+  inset: 3px;
+}
