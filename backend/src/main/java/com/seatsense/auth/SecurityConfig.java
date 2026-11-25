@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, SpaRoutes.PAGES).permitAll()
                 .requestMatchers("/api/gate/**", "/api/sessions/**").hasRole(Role.GATE.name())
                 .requestMatchers("/api/admin/**", "/api/sim/**").hasRole(Role.LIBRARIAN.name())
-                .requestMatchers("/api/waitlist/**", "/api/seats/*/report").hasRole(Role.STUDENT.name())
+                .requestMatchers("/api/waitlist/**", "/api/alerts/**", "/api/seats/*/report").hasRole(Role.STUDENT.name())
                 .anyRequest().authenticated())
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())

@@ -260,6 +260,12 @@ Accept the current offer. Accepting **restarts the hold at a fresh 15 minutes** 
 
 Response `200`: same body as `GET /api/waitlist/me`, with `status: "ACCEPTED"` and the new `offerExpiresAt`. Error: `NO_OFFER`.
 
+### `GET /api/alerts`, `POST /api/alerts`, `DELETE /api/alerts/{id}` (B, stretch B4.2)
+
+"Tell me when Floor N has 5+ free seats". `POST` body: `{ "floorId": "3F", "minFree": 5 }` (1 to 50). Response `201`: `{ "id": 7, "floorId": "3F", "minFree": 5 }`. Asking again for the same floor changes the number. `GET` lists the student's live alerts. `DELETE` stops one (`204`).
+Errors: `ALREADY_FREE` (409) if the floor already has that many free seats, `NOT_FOUND` for an unknown floor, `VALIDATION_FAILED` for a number outside 1 to 50.
+The first time the floor has at least `minFree` free seats, the student gets one `FLOOR_FREE` notification and the alert is done.
+
 ### `POST /api/seats/{code}/report` (S, stretch S4.3)
 
 Request: `{ "reportedState": "TAKEN" }` or `{ "reportedState": "FREE" }`. Response `202`.
@@ -325,6 +331,7 @@ Notification payloads:
 { "type": "BREAK_ENDING", "seat": "2F-C7", "endsAt": "..." }
 { "type": "BREAK_ENDED", "seat": "2F-C7" }
 { "type": "FOUND_ITEM", "seat": "3F-C12", "description": "Black phone charger" }
+{ "type": "FLOOR_FREE", "floor": "3F", "floorName": "Third floor", "free": 6 }
 ```
 
 ---

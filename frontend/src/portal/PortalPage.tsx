@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import { fetchAvailability, type Availability } from '../shared/api/layoutApi'
 import { ApiError } from '../shared/api/gateApi'
-import { acceptOffer, fetchPlace, joinWaitlist, leaveWaitlist, type Place } from '../shared/api/waitlistApi'
+import {
+  acceptOffer,
+  cancelAlert,
+  fetchAlerts,
+  fetchPlace,
+  joinWaitlist,
+  leaveWaitlist,
+  setAlert,
+  type FreeSeatAlert,
+  type Place,
+} from '../shared/api/waitlistApi'
 import type { Me } from '../shared/api/authApi'
 import StaffLogin from '../shared/auth/StaffLogin'
 import { useLive } from '../shared/live/live'
@@ -10,7 +20,7 @@ import './portal.css'
 // Student portal (WORKPLAN B2.3): join the waitlist when the library is full, see
 // your place, and accept a held seat. Offers arrive live on /user/queue/notifications.
 
-type Notification = { type: string; seat?: string; expiresAt?: string }
+type Notification = { type: string; seat?: string; expiresAt?: string; floorName?: string; free?: number }
 
 const timeFormat = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' })
 
@@ -30,10 +40,15 @@ function Portal({ me, onSignOut }: { me: Me; onSignOut: () => Promise<void> }) {
   const [banner, setBanner] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const [alerts, setAlerts] = useState<FreeSeatAlert[]>([])
+
   const refresh = useCallback(() => {
     fetchPlace()
       .then(setPlace)
       .catch(() => setError('Your place could not be loaded. Reload the page.'))
+    fetchAlerts()
+      .then(setAlerts)
+      .catch(() => undefined)
   }, [])
 
   useEffect(() => {
@@ -48,6 +63,7 @@ function Portal({ me, onSignOut }: { me: Me; onSignOut: () => Promise<void> }) {
     (n: Notification) => {
       if (n.type === 'SEAT_OFFERED') setBanner(`Seat ${n.seat} is held for you. Accept it below.`)
       if (n.type === 'OFFER_EXPIRED') setBanner(`Your offer for seat ${n.seat} ran out.`)
+      if (n.type === 'FLOOR_FREE') setBanner(`${n.floorName} now has ${n.free} free seats.`)
       refresh()
     },
     [refresh],
@@ -66,7 +82,9 @@ function Portal({ me, onSignOut }: { me: Me; onSignOut: () => Promise<void> }) {
           ? 'You already have a seat in the library.'
           : e instanceof ApiError && e.error === 'NO_OFFER'
             ? 'That offer is no longer open.'
-            : 'That did not go through. Try again.',
+            : e instanceof ApiError && (e.error === 'ALREADY_FREE' || e.error === 'VALIDATION_FAILED')
+              ? e.message
+              : 'That did not go through. Try again.',
       )
     } finally {
       setBusy(false)
@@ -169,8 +187,84 @@ function Portal({ me, onSignOut }: { me: Me; onSignOut: () => Promise<void> }) {
             </button>
           </section>
         )}
+
+        {availability && (
+          <FloorAlerts
+            floors={availability.floors}
+            alerts={alerts}
+            busy={busy}
+            onSet={(floorId, minFree) => act(() => setAlert(floorId, minFree))}
+            onCancel={(id) => act(() => cancelAlert(id))}
+          />
+        )}
       </main>
     </div>
+  )
+}
+
+/** B4.2: "Tell me when a floor has this many free seats". One message, then the alert is done. */
+function FloorAlerts({
+  floors,
+  alerts,
+  busy,
+  onSet,
+  onCancel,
+}: {
+  floors: Availability['floors']
+  alerts: FreeSeatAlert[]
+  busy: boolean
+  onSet: (floorId: string, minFree: number) => void
+  onCancel: (id: number) => void
+}) {
+  const [floorId, setFloorId] = useState(floors[0]?.id ?? '')
+  const [minFree, setMinFree] = useState(5)
+  const nameOf = (id: string) => floors.find((f) => f.id === id)?.name ?? id
+
+  return (
+    <section className="portal-card">
+      <p className="portal-label">Alerts</p>
+      <h2>Tell me when seats free up</h2>
+      <p className="portal-muted">You get one message here when the floor has that many free seats.</p>
+      {alerts.length > 0 && (
+        <ul className="portal-alerts">
+          {alerts.map((a) => (
+            <li key={a.id}>
+              <span>
+                {nameOf(a.floorId)}: {a.minFree}+ free seats
+              </span>
+              <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => onCancel(a.id)}>
+                Stop
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="portal-alert-form">
+        <label className="portal-field">
+          Floor
+          <select value={floorId} onChange={(e) => setFloorId(e.target.value)}>
+            {floors.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="portal-field">
+          Free seats
+          <input
+            type="number"
+            min={1}
+            max={50}
+            value={minFree}
+            onChange={(e) => setMinFree(Number(e.target.value))}
+          />
+        </label>
+      </div>
+      <button type="button" className="btn btn-primary" disabled={busy || !floorId} onClick={() => onSet(floorId, minFree)}>
+        Alert me
+      </button>
+    </section>
   )
 }
 

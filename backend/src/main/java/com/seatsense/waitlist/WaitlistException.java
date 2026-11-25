@@ -39,4 +39,12 @@ public class WaitlistException extends RuntimeException {
     static WaitlistException notAStudent() {
         return new WaitlistException("FORBIDDEN", 403, "This account is not linked to a student.");
     }
+
+    static WaitlistException badAlertNumber(int max) {
+        return new WaitlistException("VALIDATION_FAILED", 400, "Choose a number of free seats from 1 to " + max + ".");
+    }
+
+    static WaitlistException alreadyFree(String floorName, int free) {
+        return new WaitlistException("ALREADY_FREE", 409, floorName + " already has " + free + " free seats. You can go now.");
+    }
 }
