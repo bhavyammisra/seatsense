@@ -23,14 +23,31 @@ h1,
 h2,
 h3 {
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
   font-weight: 600;
-  letter-spacing: -0.01em;
 }
 
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.25rem; }
+/* Editorial headings: a high-contrast serif for page and section titles. */
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.625rem; }
 h3 { font-size: 1rem; }
+
+/* Small tracked caps above a heading: "02 / The floor plan". */
+.eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
 
 p { margin: 0; }
 
@@ -59,14 +76,17 @@ button {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 46px;
   padding: 0 var(--space-5);
   border: 1px solid transparent;
-  border-radius: var(--radius);
-  font-weight: 500;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .btn-primary {
@@ -86,12 +106,35 @@ button {
 
 .btn-ghost {
   background: transparent;
-  border-color: var(--line-strong);
+  border-color: var(--ink-2);
   color: var(--ink);
 }
 
 .btn-ghost:hover {
-  border-color: var(--ink-2);
+  border-color: var(--ink);
+  background: var(--surface);
+}
+
+/* On the wine band: cream outline, filled cream on hover. */
+.btn-light {
+  background: transparent;
+  border-color: var(--cream);
+  color: var(--cream);
+}
+
+.btn-light:hover {
+  background: var(--cream);
+  color: var(--wine);
+}
+
+.btn-cream {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--wine);
+}
+
+.btn-cream:hover {
+  background: #fff;
 }
 
 .visually-hidden {

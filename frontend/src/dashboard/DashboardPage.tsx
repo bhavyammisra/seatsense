@@ -13,6 +13,8 @@ import {
 import type { Floor, Seat, SeatState, SeatStates } from '../shared/layout'
 import { reconnectLive, useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
+import { LoginFrame } from '../shared/auth/StaffLogin'
+import '../shared/auth/staff-login.css'
 import './dashboard.css'
 
 // Librarian dashboard (WORKPLAN B1.6): who is in the library right now, floor
@@ -37,6 +39,14 @@ export default function DashboardPage() {
     setMe(null)
   }
 
+  if (me === null) {
+    return (
+      <LoginFrame title="Library staff">
+        <LoginForm onLoggedIn={setMe} />
+      </LoginFrame>
+    )
+  }
+
   return (
     <div className="dash">
       <header className="dash-header">
@@ -57,8 +67,6 @@ export default function DashboardPage() {
       <main className="dash-main">
         {me === undefined ? (
           <p className="dash-muted">Checking your login…</p>
-        ) : me === null ? (
-          <LoginForm onLoggedIn={setMe} />
         ) : !STAFF.includes(me.role) ? (
           <section className="dash-panel">
             <h1>This account can't open the dashboard</h1>
@@ -102,9 +110,9 @@ function LoginForm({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
   }
 
   return (
-    <form className="dash-panel dash-login" onSubmit={submit} noValidate>
-      <h1>Log in</h1>
-      <p className="dash-muted">For library staff.</p>
+    <form className="staff-login-panel" onSubmit={submit} noValidate>
+      <p className="eyebrow">Log in</p>
+      <p className="staff-login-muted">For library staff: the dashboard shows who is in, floor by floor.</p>
       <label>
         Username
         <input
@@ -130,7 +138,7 @@ function LoginForm({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
         />
       </label>
       {error && (
-        <p className="dash-error" role="alert">
+        <p className="staff-login-error" role="alert">
           {error}
         </p>
       )}

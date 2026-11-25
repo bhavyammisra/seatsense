@@ -4,26 +4,27 @@
   pattern (see SeatMap), never by colour alone.
 */
 :root {
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --bg: #f6f4f1;
-  --surface: #ffffff;
-  --surface-sunk: #eeebe6;
-  --ink: #1d1b19;
-  --ink-2: #5d5852;
-  --ink-3: #8b857d;
-  --line: #e1ddd6;
-  --line-strong: #c9c3ba;
+  --bg: #f4eee6;
+  --surface: #fbf8f3;
+  --surface-sunk: #ebe3d8;
+  --ink: #1f1915;
+  --ink-2: #5a5048;
+  --ink-3: #8a7f75;
+  --line: #e2d8cb;
+  --line-strong: #c7b9a8;
 
-  --accent: #8a1c2b;
-  --accent-hover: #74141f;
+  --accent: #7a1626;
+  --accent-hover: #5c1020;
   --accent-ink: #ffffff;
-  --accent-soft: #f5e6e8;
+  --accent-soft: #f3e2df;
 
   --seat-free: #2f6b4f;
-  --seat-free-bg: #ffffff;
-  --seat-selected: #8a1c2b;
+  --seat-free-bg: #fbf8f3;
+  --seat-selected: #7a1626;
   --seat-taken: #d3cec6;
   --seat-taken-ink: #9a948b;
   --seat-break: #b06a12;
@@ -40,9 +41,9 @@
   --warn: #b06a12;
   --danger: #a3262f;
 
-  --radius-sm: 4px;
-  --radius: 6px;
-  --radius-lg: 10px;
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-lg: 4px;
   --shadow: 0 1px 2px rgb(29 27 25 / 0.06), 0 2px 8px rgb(29 27 25 / 0.06);
 
   --space-1: 4px;
@@ -52,15 +53,23 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 48px;
+  --space-8: 72px;
+  --space-9: 112px;
+
+  /* The hero band (ROSSO-style editorial maroon) */
+  --wine: #5c1020;
+  --wine-deep: #3d0a15;
+  --cream: #f4eee6;
+  --cream-2: #d9c9b8;
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #161514;
-    --surface: #201e1c;
-    --surface-sunk: #1a1917;
+    --bg: #15110e;
+    --surface: #1e1814;
+    --surface-sunk: #19140f;
     --ink: #f1eee9;
     --ink-2: #b8b2a9;
     --ink-3: #8a847b;
@@ -73,7 +82,7 @@
     --accent-soft: #3a1c22;
 
     --seat-free: #6fbf96;
-    --seat-free-bg: #201e1c;
+    --seat-free-bg: #1e1814;
     --seat-selected: #d2546a;
     --seat-taken: #3a3733;
     --seat-taken-ink: #6d675f;
@@ -97,9 +106,9 @@
 }
 
 :root[data-theme='dark'] {
-  --bg: #161514;
-  --surface: #201e1c;
-  --surface-sunk: #1a1917;
+  --bg: #15110e;
+  --surface: #1e1814;
+  --surface-sunk: #19140f;
   --ink: #f1eee9;
   --ink-2: #b8b2a9;
   --ink-3: #8a847b;
@@ -110,7 +119,7 @@
   --accent-ink: #1d0a0e;
   --accent-soft: #3a1c22;
   --seat-free: #6fbf96;
-  --seat-free-bg: #201e1c;
+  --seat-free-bg: #1e1814;
   --seat-selected: #d2546a;
   --seat-taken: #3a3733;
   --seat-taken-ink: #6d675f;

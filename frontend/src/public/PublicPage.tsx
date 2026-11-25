@@ -70,91 +70,186 @@ export default function PublicPage() {
   }, [])
   useLive<SeatUpdate>(floorId ? `/topic/seats/${floorId}` : null, onSeatUpdate)
 
+  const pickFloor = (id: string) => {
+    setFloorId(id)
+    document.getElementById('floor-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const current = availability?.floors.find((f) => f.id === floorId)
+
   return (
     <div className="public">
-      <header className="public-header">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden="true" />
-          <span className="brand-name">SeatSense</span>
-          <span className="brand-place">Nava Nalanda Central Library</span>
-        </div>
-        <span className="provisional-tag">Provisional layout</span>
-      </header>
+      <section className="hero">
+        <header className="site-nav">
+          <a className="wordmark" href="/">
+            SeatSense
+            <span>Nava Nalanda Library</span>
+          </a>
+          <nav aria-label="Main">
+            <a href="#floor-plan">Floor plan</a>
+            <a href="#how">How it works</a>
+            <a href="/portal">Waitlist</a>
+            <a href="/dashboard" className="site-nav-staff">
+              Staff
+            </a>
+          </nav>
+        </header>
 
-      <main className="public-main">
-        {error ? (
-          <section className="public-error" role="alert">
-            <h1>Seat information is not available right now</h1>
-            <p>The library system could not be reached. Try again in a minute.</p>
-          </section>
-        ) : !availability || !floors ? (
-          <p className="public-loading" aria-live="polite">
-            Loading seats…
+        <div className="hero-body">
+          <p className="hero-rail" aria-hidden="true">
+            Section 01
           </p>
-        ) : (
-          <>
-            <section className="public-summary" aria-live="polite">
-              {availability.full ? (
-                <>
-                  <h1>The library is full</h1>
-                  <p>All {availability.total} seats are taken. Seats free up through the day; this page updates on its own.</p>
-                  <p>
-                    <a className="btn btn-primary public-join" href="/portal">
-                      Join the waitlist
-                    </a>
-                  </p>
-                  <p className="public-note">The first seat that frees up is held for you for 15 minutes.</p>
-                </>
-              ) : (
-                <>
-                  <h1>
-                    <span className="public-count">{availability.free}</span> seats free
-                  </h1>
-                  <p>
-                    of {availability.total} in the library, updated {timeFormat.format(new Date(availability.updatedAt))}
-                  </p>
-                </>
-              )}
-              <p className="public-note">
-                This page is view only. Seats are given out when you scan your ID card at the entrance.
-              </p>
-            </section>
 
-            <nav className="public-floors" aria-label="Floors">
-              {availability.floors.map((f) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  className="public-floor"
-                  aria-current={f.id === floorId ? 'true' : undefined}
-                  data-full={f.full || undefined}
-                  onClick={() => setFloorId(f.id)}
-                >
-                  <span className="public-floor-name">{f.name}</span>
-                  <span className="public-floor-count">
-                    {f.full ? 'Full' : `${f.free} free`}
-                    <span className="public-floor-total"> of {f.total}</span>
-                  </span>
-                  <span className="public-floor-bar" aria-hidden="true">
-                    <span style={{ width: `${f.total ? ((f.total - f.free) / f.total) * 100 : 0}%` }} />
-                  </span>
-                </button>
+          <div className="hero-copy" aria-live="polite">
+            <p className="eyebrow">Live seats, Nava Nalanda Central Library</p>
+            {error ? (
+              <>
+                <h1 className="hero-title hero-title-small">Seat information is resting.</h1>
+                <p className="hero-sub">The library system could not be reached. Try again in a minute.</p>
+              </>
+            ) : !availability ? (
+              <h1 className="hero-title hero-title-small">Counting seats…</h1>
+            ) : availability.full ? (
+              <>
+                <h1 className="hero-title">
+                  The library
+                  <br />
+                  is full.
+                </h1>
+                <p className="hero-sub">
+                  All {availability.total} seats are taken. Join the waitlist and the first seat that frees up is
+                  held for you for 15 minutes.
+                </p>
+                <div className="hero-actions">
+                  <a className="btn btn-cream" href="/portal">
+                    Join the waitlist
+                  </a>
+                  <a className="btn btn-light" href="#floor-plan">
+                    See the floor plan
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 className="hero-title">
+                  <span className="hero-count">{availability.free}</span>
+                  <br />
+                  seats free.
+                </h1>
+                <p className="hero-sub">
+                  of {availability.total} across four floors, updated{' '}
+                  {timeFormat.format(new Date(availability.updatedAt))}
+                </p>
+                <div className="hero-actions">
+                  <a className="btn btn-cream" href="#floor-plan">
+                    See the floor plan
+                  </a>
+                  <a className="btn btn-light" href="#how">
+                    How it works
+                  </a>
+                </div>
+              </>
+            )}
+          </div>
+
+          {availability && (
+            <ol className="hero-floors" aria-label="Floors">
+              {availability.floors.map((f, i) => (
+                <li key={f.id}>
+                  <button
+                    type="button"
+                    className="hero-floor"
+                    aria-current={f.id === floorId ? 'true' : undefined}
+                    data-full={f.full || undefined}
+                    onClick={() => pickFloor(f.id)}
+                  >
+                    <span className="hero-floor-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="hero-floor-name">{f.name}</span>
+                    <span className="hero-floor-count">
+                      {f.full ? 'Full' : f.free}
+                      <small>{f.full ? ` ${f.total} seats` : ` of ${f.total}`}</small>
+                    </span>
+                    <span className="hero-floor-bar" aria-hidden="true">
+                      <span style={{ width: `${f.total ? ((f.total - f.free) / f.total) * 100 : 0}%` }} />
+                    </span>
+                  </button>
+                </li>
               ))}
-            </nav>
+            </ol>
+          )}
+        </div>
 
-            <section className="public-map card" aria-label="Seat map">
-              {map && map.floor.id === floorId ? (
-                <>
-                  <SeatMap floor={map.floor} states={map.states} readOnly />
-                  <SeatLegend showSelected={false} />
-                </>
-              ) : (
-                <p className="public-loading">Loading the floor…</p>
-              )}
-            </section>
-          </>
+        <p className="hero-foot">View only. Seats are given out when you scan your ID card at the entrance.</p>
+      </section>
+
+      <section id="floor-plan" className="plan">
+        <div className="section-head">
+          <p className="eyebrow">02 / The floor plan</p>
+          <h2>{current ? `${current.name}.` : 'The floor plan.'}</h2>
+          {current && (
+            <p className="section-lede">
+              {current.full ? 'Every seat on this floor is taken.' : `${current.free} of ${current.total} seats free right now.`}{' '}
+              The map updates on its own.
+            </p>
+          )}
+        </div>
+
+        {availability && (
+          <nav className="plan-tabs" aria-label="Choose a floor">
+            {availability.floors.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                aria-current={f.id === floorId ? 'true' : undefined}
+                onClick={() => setFloorId(f.id)}
+              >
+                {f.name}
+              </button>
+            ))}
+          </nav>
         )}
-      </main>
+
+        <div className="plan-map" aria-label="Seat map">
+          {map && map.floor.id === floorId ? (
+            <>
+              <SeatMap floor={map.floor} states={map.states} readOnly />
+              <SeatLegend showSelected={false} />
+            </>
+          ) : (
+            <p className="public-loading">{error ? 'The floor plan is not available right now.' : 'Loading the floor…'}</p>
+          )}
+        </div>
+      </section>
+
+      <section id="how" className="how">
+        <div className="section-head">
+          <p className="eyebrow">03 / How it works</p>
+          <h2>From the gate to your seat.</h2>
+        </div>
+        <ol className="how-steps">
+          <li>
+            <span className="how-num">i.</span>
+            <h3>Scan in</h3>
+            <p>Scan your ID card at the entrance gate. The kiosk opens the floor plan for you.</p>
+          </li>
+          <li>
+            <span className="how-num">ii.</span>
+            <h3>Pick a seat, or let it pick</h3>
+            <p>Tap any free seat. Or wait ten seconds and the kiosk picks the best free seat for you.</p>
+          </li>
+          <li>
+            <span className="how-num">iii.</span>
+            <h3>Take a break, or leave</h3>
+            <p>Scan out to leave. Going for chai? Choose Break and your seat waits up to 30 minutes, twice a day.</p>
+          </li>
+          <li>
+            <span className="how-num">iv.</span>
+            <h3>Full? Wait in line</h3>
+            <p>When every seat is taken, join the waitlist. The first seat that frees up is held for you for 15 minutes.</p>
+          </li>
+        </ol>
+      </section>
+
       <LegalFooter />
     </div>
   )
