@@ -64,9 +64,9 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
 ### Shefali (no Docker needed)
 - [x] **S0.1 Frontend skeleton.** React + Vite + TypeScript in `frontend/`. Folders `src/shared`, `src/kiosk`, `src/scanner`, `src/public`, `src/portal`, `src/dashboard`. Routes `/kiosk`, `/scanner`, `/`, `/portal`, `/dashboard`. Design tokens (colours, type, spacing) following PROJECT.md Section 17, with light and dark mode. Favicon. Dev proxy to the backend on port 8080.
   - Needs: nothing.
-- [ ] **S0.2 API contract.** Write `docs/api.md` from PROJECT.md Section 10: every endpoint with request and response JSON, error codes, WebSocket topics and payloads, and the list of domain event names (`SeatTaken`, `SeatFreed`, `BreakStarted`, `BreakEnded`, `SessionEnded`, ...). Bhavyam approves.
+- [x] **S0.2 API contract.** Write `docs/api.md` from PROJECT.md Section 10: every endpoint with request and response JSON, error codes, WebSocket topics and payloads, and the list of domain event names (`SeatTaken`, `SeatFreed`, `BreakStarted`, `BreakEnded`, `SessionEnded`, ...). Bhavyam approves.
   - Needs: nothing.
-- [ ] **S0.3 Decisions log.** Create `docs/decisions.md` with the decisions in this file and PROJECT.md Section 4, one line each with a date.
+- [x] **S0.3 Decisions log.** Create `docs/decisions.md` with the decisions in this file and PROJECT.md Section 4, one line each with a date.
   - Needs: nothing.
 - [ ] **S0.4 Library survey (real world, with Bhavyam if possible).** Count seats on each floor, sketch the layout (rows, tables), mark charging points, windows and quiet or discussion zones. Note opening and closing times and current library rules. Save as `docs/layout/` (photos of sketches plus a `layout.json` with every seat's code, row, column, table, x, y and features).
   - Needs: nothing.
