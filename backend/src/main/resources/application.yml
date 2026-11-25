@@ -14,6 +14,9 @@ spring:
       ddl-auto: validate
   flyway:
     locations: classpath:db/migration
+    # Shefali numbers migrations odd and Bhavyam even, so a lower number can land after a higher one
+    # (V2 after V4). Without this, Flyway refuses to start on a database that already has the higher one.
+    out-of-order: true
 
 management:
   endpoints:
