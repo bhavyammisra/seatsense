@@ -39,7 +39,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper json) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/**", "/api/auth/login", "/actuator/health", "/error").permitAll()
+                // /ws: the socket handshake; who may subscribe to what is checked per message (WebSocketSecurityConfig)
+                .requestMatchers("/api/public/**", "/api/auth/login", "/actuator/health", "/error", "/ws").permitAll()
                 .requestMatchers("/api/gate/**", "/api/sessions/**").hasRole(Role.GATE.name())
                 .requestMatchers("/api/admin/**").hasRole(Role.LIBRARIAN.name())
                 .requestMatchers("/api/waitlist/**", "/api/seats/*/report").hasRole(Role.STUDENT.name())

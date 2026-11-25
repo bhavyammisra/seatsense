@@ -24,6 +24,9 @@ management:
 seatsense:
   # The library's time zone. Every "now" goes through TimeProvider, which uses this.
   time-zone: Asia/Kolkata
+  # Pages allowed to open the /ws socket. The Vite dev server (port 5173) and the backend itself.
+  # shortcut: localhost only; add the demo laptop's address when hosting is decided (B3.2).
+  ws-allowed-origins: http://localhost:[*],http://127.0.0.1:[*]
 
 ---
 # local: your own machine, Postgres from docker-compose.yml.

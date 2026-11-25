@@ -111,7 +111,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S0.5.
 - [ ] **B1.2 Concurrency proof.** Testcontainers test: 200 threads take the same seat at once, exactly one ACTIVE session exists afterwards. Same for one student taking two seats. Runs in CI.
   - Needs: B1.1, S1.4.
-- [ ] **B1.3 Live module.** STOMP WebSocket config. Listen to domain events and broadcast `/topic/seats/{floorId}` and `/topic/availability` as specified in `docs/api.md`. Frontend helper hook `useLive()` in `frontend/src/shared/live` (shared file: small PR, Shefali approves).
+- [x] **B1.3 Live module.** STOMP WebSocket config. Listen to domain events and broadcast `/topic/seats/{floorId}` and `/topic/availability` as specified in `docs/api.md`. Frontend helper hook `useLive()` in `frontend/src/shared/live` (shared file: small PR, Shefali approves).
   - Needs: B0.2, S0.2.
 - [ ] **B1.4 Public availability.** `GET /api/public/availability` (free and total per floor, FULL flag). Public site page `/`: per-floor counts, FULL state, SeatMap per floor, live updates.
   - Needs: B1.3, S1.1, S1.6.
