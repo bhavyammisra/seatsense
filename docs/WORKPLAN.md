@@ -48,7 +48,7 @@ Note: `seat_session` belongs to Shefali's `session` package, but its **partial u
 Goal: a repo where both of us can build, test and run the skeleton, with CI on every PR.
 
 ### Bhavyam (needs Docker)
-- [ ] **B0.1 Branch protection.** GitHub Settings → Branches → protect `main`: require a pull request with 1 approval, require CI to pass (once B0.5 exists). Only the repo owner can do this.
+- [x] **B0.1 Branch protection.** GitHub Settings → Branches → protect `main`: require a pull request with 1 approval, require CI to pass (once B0.5 exists). Only the repo owner can do this.
   - Needs: nothing.
 - [x] **B0.2 Backend skeleton.** Spring Boot 3.5.x, Java 21, Maven wrapper, group `com.seatsense`. Dependencies: Web, Data JPA, Validation, Security, WebSocket, Flyway, PostgreSQL driver, Actuator, Testcontainers, JUnit 5. Empty packages from PROJECT.md Section 8. `common/TimeProvider` (injectable clock, with a test-controllable implementation). Security temporarily permits all requests.
   - Needs: nothing.
@@ -77,7 +77,7 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
   - Needs: B0.3.
 
 ### Both
-- [ ] **X0.1** Ask sir whether a specific stack is required (Spring Boot and React are assumed). Record the answer in `docs/decisions.md`.
+- [x] **X0.1** Ask sir whether a specific stack is required (Spring Boot and React are assumed). Record the answer in `docs/decisions.md`.
 - [ ] **X0.2** Get the submission and demo dates; fill them in below.
 
 **Phase 0 dates:** ___ to ___
@@ -115,7 +115,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: B0.2, S0.2.
 - [ ] **B1.4 Public availability.** `GET /api/public/availability` (free and total per floor, FULL flag). Public site page `/`: per-floor counts, FULL state, SeatMap per floor, live updates.
   - Needs: B1.3, S1.1, S1.6.
-- [ ] **B1.5 Auth.** Spring Security roles STUDENT, LIBRARIAN, ADMIN, GATE. `app_user` table (V4) with sample accounts (passwords in `.env`, never committed). Public endpoints stay open; gate endpoints require GATE; admin endpoints require LIBRARIAN.
+- [x] **B1.5 Auth.** Spring Security roles STUDENT, LIBRARIAN, ADMIN, GATE. `app_user` table (V4) with sample accounts (passwords in `.env`, never committed). Public endpoints stay open; gate endpoints require GATE; admin endpoints require LIBRARIAN.
   - Needs: B0.2.
 - [ ] **B1.6 Librarian dashboard v1.** `/dashboard`: login, live occupancy per floor, headcount, SeatMap per floor. `GET /api/admin/headcount`.
   - Needs: B1.3, B1.5, S1.6.

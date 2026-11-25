@@ -26,6 +26,10 @@ The steps below use Docker Desktop for Postgres. Without Docker, any local Postg
    Always start the backend from the `backend/` folder (this applies to `java -jar` too). It reads the database settings from `../.env`, so started from anywhere else it will not find them.
 4. Check it is up: http://localhost:8080/actuator/health should show `{"status":"UP"}`.
 
+On a local run the backend creates **sample** login accounts, all with the `SAMPLE_PASSWORD` from your `.env`: `gate` (scanner and kiosk), `librarian` and `admin` (dashboard), and `sample.student1` to `sample.student5` (linked to the sample students). If `SAMPLE_PASSWORD` is empty it skips them and logs a warning.
+
+The frontend talks to the API with a session cookie. Every POST, PUT and DELETE must send the `XSRF-TOKEN` cookie's value in an `X-XSRF-TOKEN` header, or it is refused with 403.
+
 Flyway applies every migration in `backend/src/main/resources/db/migration` on startup.
 
 To use the demo-only features (simulator, once B3.1 exists), run with the `dev` profile instead:

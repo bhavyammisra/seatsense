@@ -27,6 +27,13 @@ class SeatsenseApplicationTests extends PostgresIntegrationTest {
         assertThat(response.getBody()).contains("\"status\":\"UP\"");
     }
 
+    @Test
+    void everyResponseSetsTheCsrfCookieForTheFrontend() {
+        // Here, not in AuthIntegrationTest: MockMvc's security setup replaces the cookie token store in its context.
+        assertThat(rest.getForEntity("/actuator/health", String.class).getHeaders().get("Set-Cookie"))
+            .anyMatch(cookie -> cookie.startsWith("XSRF-TOKEN="));
+    }
+
     @Autowired
     private TimeProvider time;
 
