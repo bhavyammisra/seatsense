@@ -97,6 +97,12 @@ export default function PublicPage() {
                 <>
                   <h1>The library is full</h1>
                   <p>All {availability.total} seats are taken. Seats free up through the day; this page updates on its own.</p>
+                  <p>
+                    <a className="btn btn-primary public-join" href="/portal">
+                      Join the waitlist
+                    </a>
+                  </p>
+                  <p className="public-note">The first seat that frees up is held for you for 15 minutes.</p>
                 </>
               ) : (
                 <>
