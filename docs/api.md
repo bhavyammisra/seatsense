@@ -4,7 +4,7 @@ Single source of truth for the HTTP API, WebSocket messages and domain events. B
 
 **Changing it:** open a small PR that changes only this file, tag the other person, and merge it **before** code that depends on the change. Owners are marked on each endpoint (S = Shefali, B = Bhavyam).
 
-Status: draft v0.1 (WORKPLAN S0.2). Everything here can change until Phase 1 is merged.
+Status: draft v0.2 (WORKPLAN S0.2), after review on PR #4. Everything here can change until Phase 1 is merged.
 
 ---
 
@@ -42,6 +42,8 @@ Every error response has this shape:
 | 409 | `NO_BREAKS_LEFT` | Daily break limit reached. |
 | 409 | `LIBRARY_CLOSED` | Outside opening hours. |
 | 409 | `INVALID_TRANSITION` | Seat state machine refused the change (for example returning from a break that already ended). |
+| 409 | `ALREADY_WAITING` | The student is already on the waitlist. |
+| 409 | `NO_OFFER` | Accepting when there is no open offer (none made, already accepted, or expired). |
 
 ---
 
@@ -156,7 +158,14 @@ When there is not enough history, both fields are `null`. Never invent a value.
 ## Gate (role `GATE`)
 
 ### `POST /api/gate/scan` (S, S1.5)
-Called by the scanner page with the card number it read. The server decides whether this is an entry or an exit.
+Called by the scanner page with the card number it read. The server decides the mode from the student's current session:
+
+| Student's session | Mode | What happens |
+|---|---|---|
+| None open | `ENTRY` | Kiosk shows the welcome screen and seat picker. |
+| `ACTIVE` | `EXIT` | Kiosk asks Leaving or Break. |
+| `ON_BREAK`, break not over | `RETURN` | The server returns the student to their seat (same as `POST /api/sessions/{id}/return`). Kiosk shows "Welcome back, seat 2F-C7". No seat picking. |
+| `ON_BREAK`, break already over | `ENTRY` | The break expired and the seat was freed, so this is a normal entry. |
 
 Request:
 ```json
@@ -174,9 +183,14 @@ Response `200` for an exit:
 { "mode": "EXIT", "student": { "...": "..." }, "session": { "...Session": "" } }
 ```
 
+Response `200` for a return from break:
+```json
+{ "mode": "RETURN", "student": { "...": "..." }, "session": { "...Session, status ACTIVE": "" } }
+```
+
 Errors: `UNKNOWN_CARD`, `LIBRARY_CLOSED`.
 
-Every scan also broadcasts `gate.scanned` to `/topic/gate/{gateId}` so the kiosk screen (a different device from the phone scanner) knows to show the welcome screen.
+Every scan also sends a `SCANNED` message to `/topic/gate/{gateId}` (see WebSocket below) so the kiosk screen, a different device from the phone scanner, knows what to show.
 
 ### `POST /api/sessions` (S, S1.5 and S2.x)
 Take one or more seats.
@@ -209,7 +223,7 @@ Request:
 Response `200`: the updated `Session`. Errors: `NO_BREAKS_LEFT`, `INVALID_TRANSITION`.
 
 ### `POST /api/sessions/{id}/return` (S, S2.4)
-Student scans back in before the break ends. Response `200`: the updated `Session`. Error: `INVALID_TRANSITION` if the break already expired.
+Ends a break early. The gate calls this logic itself on a `RETURN` scan; the endpoint exists for the kiosk and tests. Response `200`: the updated `Session`. Error: `INVALID_TRANSITION` if the break already expired.
 
 ---
 
@@ -227,7 +241,7 @@ Login request:
 
 Request: `{ "floorPref": "2F" }` (`floorPref` may be null for any floor)
 
-Response `201`: `{ "position": 3, "joinedAt": "..." }`. Error `409 ALREADY_INSIDE` if the student is in the library.
+Response `201`: `{ "position": 3, "joinedAt": "..." }`. Errors: `ALREADY_INSIDE` if the student is in the library, `ALREADY_WAITING` if they are already on the waitlist.
 
 ### `GET /api/waitlist/me` (B, B2.2)
 
@@ -241,7 +255,9 @@ Response `200`:
 Leave the waitlist. Response `204`.
 
 ### `POST /api/waitlist/accept` (B, B2.2)
-Accept the current offer. The seat stays HELD for the student until the offer expires; it becomes theirs only when they scan in at the gate. Response `200`: same body as `GET /api/waitlist/me`.
+Accept the current offer. Accepting **restarts the hold at a fresh 15 minutes** from the moment of acceptance, so someone who accepts at minute 14 still has time to walk over. An offer can be accepted once; the hold is not extended again. The seat stays HELD until the student scans in at the gate (the hold becomes `USED`) or the 15 minutes run out (`EXPIRED`, and the seat goes to the next person).
+
+Response `200`: same body as `GET /api/waitlist/me`, with `status: "ACCEPTED"` and the new `offerExpiresAt`. Error: `NO_OFFER`.
 
 ### `POST /api/seats/{code}/report` (S, stretch S4.3)
 
@@ -295,8 +311,10 @@ Endpoint: `/ws` (SockJS not used). The frontend connects with `@stomp/stompjs`.
 |---|---|---|
 | `/topic/seats/{floorId}` | `{ "code": "2F-C7", "state": "TAKEN", "at": "..." }` | Any seat on that floor changes state. |
 | `/topic/availability` | Same body as `GET /api/public/availability` | Any seat changes state (throttled to at most 2 per second). |
-| `/topic/gate/{gateId}` | `{ "type": "SCANNED", "mode": "ENTRY", "student": {...}, "lastSeat": "...", "heldSeat": null }` | A card is scanned at that gate. |
+| `/topic/gate/{gateId}` | `{ "type": "SCANNED", "mode": "ENTRY", "student": {...}, "lastSeat": "...", "heldSeat": null }` (`mode` is `ENTRY`, `EXIT` or `RETURN`) | A card is scanned at that gate. |
 | `/user/queue/notifications` | see below | Something happens to this student. |
+
+**Who can subscribe:** `/topic/seats/*` and `/topic/availability` are public (no names, only seat codes and counts). `/topic/gate/*` carries the student's name, so **only the `GATE` role may subscribe**; the server rejects any other subscription (enforced in B1.3 and B1.5). `/user/queue/notifications` reaches only the logged-in student it belongs to.
 
 Notification payloads:
 ```json
@@ -315,8 +333,8 @@ Published with Spring's `ApplicationEventPublisher` by the module that owns the 
 
 | Event | Fields | Published by | Main listeners |
 |---|---|---|---|
-| `CardScanned` | cardId, gateId, studentId, mode, at | `gate` (S) | `live` |
-| `SeatTaken` | seatCode, floorId, studentId, sessionId, at | `session` (S) | `live`, `analytics` |
+| `CardScanned` | cardId, gateId, studentId, mode (`ENTRY`, `EXIT`, `RETURN`), at | `gate` (S) | `live` |
+| `SeatTaken` | seatCode, floorId, studentId, sessionId, at | `session` (S) | `live`, `analytics`, `waitlist` (marks the student's hold on that seat `USED`) |
 | `SeatFreed` | seatCode, floorId, reason (`LEAVE`, `BREAK_EXPIRED`, `CLOSING`, `ADMIN`), at | `session` (S) | `live`, `waitlist`, `analytics` |
 | `BreakStarted` | seatCode, sessionId, studentId, until | `session` (S) | `live` |
 | `BreakEnded` | seatCode, sessionId, studentId, returned (boolean), at | `session` (S) | `live` |
