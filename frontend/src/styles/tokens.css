@@ -1,0 +1,119 @@
+/*
+  Design tokens. One accent colour (Thapar maroon), warm neutrals, and one
+  colour per seat state. Seat states are also told apart by shape and
+  pattern (see SeatMap), never by colour alone.
+*/
+:root {
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --bg: #f6f4f1;
+  --surface: #ffffff;
+  --surface-sunk: #eeebe6;
+  --ink: #1d1b19;
+  --ink-2: #5d5852;
+  --ink-3: #8b857d;
+  --line: #e1ddd6;
+  --line-strong: #c9c3ba;
+
+  --accent: #8a1c2b;
+  --accent-hover: #74141f;
+  --accent-ink: #ffffff;
+  --accent-soft: #f5e6e8;
+
+  --seat-free: #2f6b4f;
+  --seat-free-bg: #ffffff;
+  --seat-selected: #8a1c2b;
+  --seat-taken: #d3cec6;
+  --seat-taken-ink: #9a948b;
+  --seat-break: #b06a12;
+  --seat-break-bg: #fbf1e2;
+  --seat-held: #355c8c;
+  --seat-held-bg: #e8eef6;
+  --seat-off: #b9b3aa;
+
+  --ok: #2f6b4f;
+  --warn: #b06a12;
+  --danger: #a3262f;
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 1px 2px rgb(29 27 25 / 0.06), 0 2px 8px rgb(29 27 25 / 0.06);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #161514;
+    --surface: #201e1c;
+    --surface-sunk: #1a1917;
+    --ink: #f1eee9;
+    --ink-2: #b8b2a9;
+    --ink-3: #8a847b;
+    --line: #34312d;
+    --line-strong: #4a4640;
+
+    --accent: #d2546a;
+    --accent-hover: #e06a7f;
+    --accent-ink: #1d0a0e;
+    --accent-soft: #3a1c22;
+
+    --seat-free: #6fbf96;
+    --seat-free-bg: #201e1c;
+    --seat-selected: #d2546a;
+    --seat-taken: #3a3733;
+    --seat-taken-ink: #6d675f;
+    --seat-break: #e0a14a;
+    --seat-break-bg: #33270f;
+    --seat-held: #8db0de;
+    --seat-held-bg: #1c2633;
+    --seat-off: #4a4640;
+
+    --ok: #6fbf96;
+    --warn: #e0a14a;
+    --danger: #e0707a;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 8px rgb(0 0 0 / 0.3);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #161514;
+  --surface: #201e1c;
+  --surface-sunk: #1a1917;
+  --ink: #f1eee9;
+  --ink-2: #b8b2a9;
+  --ink-3: #8a847b;
+  --line: #34312d;
+  --line-strong: #4a4640;
+  --accent: #d2546a;
+  --accent-hover: #e06a7f;
+  --accent-ink: #1d0a0e;
+  --accent-soft: #3a1c22;
+  --seat-free: #6fbf96;
+  --seat-free-bg: #201e1c;
+  --seat-selected: #d2546a;
+  --seat-taken: #3a3733;
+  --seat-taken-ink: #6d675f;
+  --seat-break: #e0a14a;
+  --seat-break-bg: #33270f;
+  --seat-held: #8db0de;
+  --seat-held-bg: #1c2633;
+  --seat-off: #4a4640;
+  --ok: #6fbf96;
+  --warn: #e0a14a;
+  --danger: #e0707a;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 8px rgb(0 0 0 / 0.3);
+  color-scheme: dark;
+}
