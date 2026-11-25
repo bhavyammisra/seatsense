@@ -133,6 +133,7 @@ Goal: full library → join waitlist → someone leaves → offer arrives → ex
 ### Shefali
 - [ ] **S2.1 Best seat.** PriorityQueue ranking from PROJECT.md Section 11.1. `choice: BEST`. Unit tests with hand-built layouts.
   - Needs: S1.4 (algorithm itself can start any time).
+  - Progress: ranking algorithm done (`allocation/BestSeatRanker`, PR for S2.1). Still to do once S1.4 exists: wire `choice: BEST` and the `SEAT_TAKEN` alternative into the session service. Tick this box then.
 - [ ] **S2.2 Same as last time** and **10-second auto-assign** on the kiosk.
   - Needs: S2.1, S1.8.
 - [ ] **S2.3 Sit together.** Group search from Section 11.2 (same row, same table, BFS fallback). All seats allocated in one transaction, all or nothing. Kiosk flow for 2 to 4 friends scanning together.
