@@ -168,19 +168,21 @@ Goal: full library → join waitlist → someone leaves → offer arrives → ex
 ## Phase 3: Demo readiness
 
 ### Bhavyam
-- [ ] **B3.1 Simulator.** Dev-profile `POST /api/sim/rush` replaying an exam-evening scenario (sample students fill the library floor by floor), and `POST /api/sim/clock` to fast-forward time.
+- [x] **B3.1 Simulator.** Dev-profile `POST /api/sim/rush` replaying an exam-evening scenario (sample students fill the library floor by floor), and `POST /api/sim/clock` to fast-forward time.
   - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B3-demo-readiness`). Bhavyam: review the PR instead.
 - [ ] **B3.2 Hosting.** Decide: run locally on one laptop on a hotspot, or deploy. Make sure phones can reach the kiosk and scanner over the demo network (HTTPS is needed for phone camera access if not on localhost).
-- [ ] **B3.3 Dashboard polish.** Seat out-of-service toggle, headcount by floor.
+  - Ready for the local option: README "Demo on phones" (mkcert https for the dev server via `SEATSENSE_HTTPS_CERT`/`KEY`, and `SEATSENSE_WS_ALLOWED_ORIGINS`). Still to decide together and try on the real phones.
+- [x] **B3.3 Dashboard polish.** Seat out-of-service toggle, headcount by floor.
   - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B3-demo-readiness`). Bhavyam: review the PR instead.
 
 ### Shefali
-- [ ] **S3.1 Concurrency demo flow.** Two phones tapping the same seat: clear "taken by someone else, try 3F-09" message on the losing phone.
-- [ ] **S3.2 Kiosk and scanner polish.** Mobile layout, empty, loading and error states, accessibility, copy review against Section 17.
-- [ ] **S3.3 README.** How to run everything locally, how to run the demo, sample card barcodes to print.
+- [x] **S3.1 Concurrency demo flow.** Two phones tapping the same seat: clear "taken by someone else, try 3F-09" message on the losing phone.
+- [x] **S3.2 Kiosk and scanner polish.** Mobile layout, empty, loading and error states, accessibility, copy review against Section 17.
+- [x] **S3.3 README.** How to run everything locally, how to run the demo, sample card barcodes to print.
 
 ### Both
 - [ ] **X3.1** Print sample ID cards with barcodes (labelled SAMPLE).
+  - The `/cards` page draws all 40 sample cards at ID-card size with Code 128 barcodes; print it.
 - [ ] **X3.2** Rehearse PROJECT.md Section 16 end to end, twice, on the real demo network.
 
 **Phase 3 dates:** ___ to ___

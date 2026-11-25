@@ -32,7 +32,7 @@ The frontend talks to the API with a session cookie. Every POST, PUT and DELETE 
 
 Flyway applies every migration in `backend/src/main/resources/db/migration` on startup.
 
-To use the demo-only features (simulator, once B3.1 exists), run with the `dev` profile instead:
+To use the demo-only features (the simulator and its buttons on the dashboard), run with the `dev` profile instead:
 ```
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
@@ -55,3 +55,63 @@ Docker must be running: database tests start their own throwaway Postgres with T
 | `local` (default) | Running on your machine | Postgres from `docker-compose.yml`, settings from `.env` |
 | `dev` | Demo rehearsal: `local` plus simulator endpoints | Same as `local` |
 | `test` | Automated tests | Testcontainers |
+
+## Run the frontend
+
+You need Node 24 (or 22). In a second terminal:
+```
+cd frontend
+npm ci
+npm run dev
+```
+Open http://localhost:5173. The dev server sends `/api` and `/ws` to the backend on port 8080.
+
+| Page | Who | Log in as |
+|---|---|---|
+| `/` | Anyone: live free seats and floor maps, "Join the waitlist" when full | nobody |
+| `/kiosk` | The screen at the library gate | `gate` |
+| `/scanner` | The phone that scans ID cards at the gate | `gate` |
+| `/portal` | Students: waitlist place and held-seat offers | `sample.student1` to `sample.student5` |
+| `/dashboard` | Library staff: headcount, occupancy, out-of-service seats, demo controls | `librarian` or `admin` |
+| `/cards` | Printable **sample** ID cards with barcodes for the demo | nobody |
+
+All students, cards and accounts above are sample data, never real people.
+
+## Demo on phones
+
+The scanner and portal run on phones that open the laptop by its network address (for example `https://192.168.1.5:5173`). Two things are needed:
+
+1. **https**, because phones only allow the camera on a secure address. With [mkcert](https://github.com/FiloSottile/mkcert):
+   ```
+   mkcert -install
+   mkcert 192.168.1.5 localhost
+   ```
+   Then start the frontend with the two files it printed:
+   ```
+   SEATSENSE_HTTPS_CERT=./192.168.1.5+1.pem SEATSENSE_HTTPS_KEY=./192.168.1.5+1-key.pem npm run dev
+   ```
+   Each phone must trust mkcert's root certificate (`mkcert -CAROOT` shows where it is), or accept the warning once.
+2. **Allow the phone's origin for live updates.** Start the backend with the laptop's address added:
+   ```
+   SEATSENSE_WS_ALLOWED_ORIGINS="https://192.168.1.5:5173,http://localhost:[*]" ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+   ```
+
+The laptop and phones must be on the same network (a phone hotspot works).
+
+## Demo script
+
+PROJECT.md Section 16, with the backend on the `dev` profile:
+
+1. Laptop: `/kiosk` (as `gate`) on the projector. Phone: `/scanner` (as `gate`). Second laptop tab: `/dashboard` (as `librarian`). Print `/cards`.
+2. Scan a sample card: the kiosk says "Welcome", counts down 10 seconds and gives the best seat, or tap one. The public site and dashboard update at once.
+3. Choose 2 seats on the kiosk and let a friend scan: they sit together.
+4. Dashboard, **Exam evening rush**: the library fills floor by floor and the top floor shows Full.
+5. On a phone, `/portal` as `sample.student1`: join the waitlist.
+6. Scan out someone on the right floor with **Leaving**: the portal shows the held seat at once. Accept, scan that student's card: the kiosk offers "Take my held seat".
+7. **Clock +30 min** shows breaks and offers running out and passing to the next person.
+8. Dashboard: click a free seat to take it out of service. **Reset** clears everything for the next run.
+
+## Concurrency proof
+
+`session/ConcurrencyProofTest` sends 200 threads through the real session service at once: 200 students on one seat (exactly 1 wins), one student on every seat of a floor (exactly 1 seat), and 200 exits of one session (freed once). It runs in CI with every other test.
+
