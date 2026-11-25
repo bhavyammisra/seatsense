@@ -89,9 +89,9 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
 Goal: scan in on a phone, the seat turns taken on the kiosk and public site in under a second; scan out frees it.
 
 ### Shefali
-- [ ] **S1.1 Layout read API.** JPA entities and repositories for floor, zone, seat. `GET /api/public/floors`, `GET /api/public/floors/{id}/seats` (seat state comes from the session module; return FREE until S1.4 lands).
+- [x] **S1.1 Layout read API.** JPA entities and repositories for floor, zone, seat. `GET /api/public/floors`, `GET /api/public/floors/{id}/seats` (seat state comes from the session module; return FREE until S1.4 lands).
   - Needs: S0.5.
-- [ ] **S1.2 Student lookup.** `StudentService.findByCardId`, with tests.
+- [x] **S1.2 Student lookup.** `StudentService.findByCardId`, with tests.
   - Needs: S0.5.
 - [x] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
   - Needs: nothing (can start any time).
