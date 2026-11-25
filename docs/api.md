@@ -13,7 +13,7 @@ Status: draft v0.1 (WORKPLAN S0.2). Everything here can change until Phase 1 is 
 - Base path: `/api`. JSON in and out, UTF-8. Field names in camelCase.
 - Times: ISO 8601 with offset, for example `2026-11-25T18:40:00+05:30`. The server's clock is the only source of time (`common/TimeProvider`).
 - Seat codes: `<floor>-<row><number>`, for example `2F-C7` (see `docs/layout/README.md`).
-- Floor ids: `GF`, `1F`, `2F`, `3F`, `4F`.
+- Floor ids: `GF`, `1F`, `2F`, `3F` (four floors, as in the library's 360 walkthrough).
 - Auth: session cookie after login (Spring Security). Roles: `STUDENT`, `LIBRARIAN`, `ADMIN`, `GATE`. Endpoints under `/api/public` need no login.
 - IDs of students are never shown in public responses.
 
@@ -73,17 +73,24 @@ Every error response has this shape:
 
 ```json
 {
-  "id": "2F",
-  "number": 2,
-  "name": "Second floor",
-  "landmark": "Stairs and lift",
-  "gridWidth": 21,
-  "gridHeight": 14,
+  "id": "1F",
+  "number": 1,
+  "name": "First floor",
+  "short": "First",
+  "landmark": "Main stairs, open atrium and lift",
+  "tourScenes": ["L5", "L6", "L7"],
+  "gridWidth": 26,
+  "gridHeight": 22,
   "sections": [
-    { "id": "hall", "name": "Reading hall", "zone": "GENERAL", "note": "Charging points on aisle and end seats.", "fromRow": 3, "toRow": 7 }
+    { "id": "tables", "name": "Reading tables", "zone": "GENERAL", "note": "Long tables with a centre divider and charging points.", "bookable": true, "fromRow": 0, "toRow": 18 }
+  ],
+  "fixtures": [
+    { "kind": "table", "section": "tables", "gx": 4, "gy": 1, "w": 8, "h": 1, "label": "Table 1" }
   ]
 }
 ```
+
+`fixtures` are furniture and rooms drawn on the map (`table`, `counter`, `room`, or `area` for parts that cannot be booked). `bookable: false` sections (seminar hall, lounge) have fixtures but no seats. `tourScenes` are the scene labels in the library's 360 walkthrough (https://tiet360.in/library/). The full shape is in `docs/layout/provisional-layout.json`.
 
 ### Student (as shown at the gate)
 
