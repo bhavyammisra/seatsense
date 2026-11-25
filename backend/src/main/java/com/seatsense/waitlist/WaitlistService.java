@@ -149,7 +149,7 @@ public class WaitlistService implements SeatHoldSource {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onSeatFreed(SeatFreed freed) {
-        seats.findByCode(freed.seatCode()).ifPresent(this::offerToNext);
+        seats.findByCodeForUpdate(freed.seatCode()).ifPresent(this::offerToNext);
     }
 
     /**

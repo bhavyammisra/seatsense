@@ -216,7 +216,7 @@ public class SessionService implements SeatStateSource {
         if (studentId == null || !students.existsById(studentId)) {
             throw new SessionException.NotFound("student " + studentId);
         }
-        Seat seat = seats.findByCode(seatCode).orElseThrow(() -> new SessionException.NotFound("seat " + seatCode));
+        Seat seat = seats.findByCodeForUpdate(seatCode).orElseThrow(() -> new SessionException.NotFound("seat " + seatCode));
         if (sessions.findOpenByStudent(studentId).isPresent()) {
             throw new SessionException.AlreadyInside(studentId);
         }
@@ -384,7 +384,7 @@ public class SessionService implements SeatStateSource {
      */
     public Seat setOutOfService(String seatCode, boolean outOfService) {
         return write.execute(status -> {
-            Seat seat = seats.findByCode(seatCode).orElseThrow(() -> new SessionException.NotFound("seat " + seatCode));
+            Seat seat = seats.findByCodeForUpdate(seatCode).orElseThrow(() -> new SessionException.NotFound("seat " + seatCode));
             SeatState current = currentState(seat);
             SeatStateMachine.next(current, outOfService ? SeatEvent.MARK_OUT_OF_SERVICE : SeatEvent.RETURN_TO_SERVICE);
             seat.setOutOfService(outOfService);
