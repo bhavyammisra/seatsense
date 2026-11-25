@@ -67,11 +67,9 @@ public class WaitlistEntry {
     void end(WaitlistStatus finalStatus, Instant at) {
         this.status = finalStatus;
         this.endedAt = at;
-        if (finalStatus != WaitlistStatus.DONE) {
-            // The CHECK in V6: only OFFERED and ACCEPTED keep an offered seat.
-            this.offeredSeatId = null;
-            this.offerExpiresAt = null;
-        }
+        // The CHECK in V6: only OFFERED and ACCEPTED carry an offered seat and expiry.
+        this.offeredSeatId = null;
+        this.offerExpiresAt = null;
     }
 
     public Long getId() {
