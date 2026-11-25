@@ -101,9 +101,9 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S1.4.
 - [x] **S1.6 SeatMap component.** Shared SVG map: renders seats from the layout API at their x, y, shows all five states distinguishable by shape or pattern as well as colour, supports click to select, and accepts live updates. Used by kiosk, public site and dashboard.
   - Needs: S0.1 (use mock data until S1.1 lands).
-- [ ] **S1.7 Scanner page.** `/scanner` on the phone: camera reads the ID barcode or QR and posts to `/api/gate/scan`. Manual ID entry as a fallback.
+- [x] **S1.7 Scanner page.** `/scanner` on the phone: camera reads the ID barcode or QR and posts to `/api/gate/scan`. Manual ID entry as a fallback.
   - Needs: S0.1.
-- [ ] **S1.8 Kiosk page.** `/kiosk`: waits for a scan, shows "Welcome, [name]", floor tabs with SeatMap, tap to take a seat, exit screen.
+- [x] **S1.8 Kiosk page.** `/kiosk`: waits for a scan, shows "Welcome, [name]", floor tabs with SeatMap, tap to take a seat, exit screen.
   - Needs: S1.5, S1.6.
 
 ### Bhavyam
@@ -136,11 +136,11 @@ Goal: full library → join waitlist → someone leaves → offer arrives → ex
 - [x] **S2.1 Best seat.** PriorityQueue ranking from PROJECT.md Section 11.1. `choice: BEST`. Unit tests with hand-built layouts.
   - Needs: S1.4 (algorithm itself can start any time).
   - Done: ranking (`allocation/BestSeatRanker`), `choice: BEST` and the `SEAT_TAKEN` alternative (S1.5 PR).
-- [ ] **S2.2 Same as last time** and **10-second auto-assign** on the kiosk.
+- [x] **S2.2 Same as last time** and **10-second auto-assign** on the kiosk.
   - Needs: S2.1, S1.8.
-- [ ] **S2.3 Sit together.** Group search from Section 11.2 (same row, same table, BFS fallback). All seats allocated in one transaction, all or nothing. Kiosk flow for 2 to 4 friends scanning together.
+- [x] **S2.3 Sit together.** Group search from Section 11.2 (same row, same table, BFS fallback). All seats allocated in one transaction, all or nothing. Kiosk flow for 2 to 4 friends scanning together.
   - Needs: S1.4 (algorithm can start any time).
-  - Progress: search algorithm and the all-or-nothing allocation (`choice: GROUP`) done. Still to do: the kiosk flow (S1.8 PR). Tick this box then.
+  - Done: search algorithm, all-or-nothing allocation (`choice: GROUP`) and the kiosk flow (friends scan in turn).
 - [x] **S2.4 Breaks.** Exit choice LEAVE or BREAK, `POST /api/sessions/{id}/return`, break limit per day, scheduled expiry of breaks using the injectable clock, `BreakEnded` event.
   - Needs: S1.5.
 - [x] **S2.5 Closing-time reset.** Scheduled job ends all sessions at the floor's close time.
