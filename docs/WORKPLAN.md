@@ -53,11 +53,11 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
 - [x] **B0.2 Backend skeleton.** Spring Boot 3.5.x, Java 21, Maven wrapper, group `com.seatsense`. Dependencies: Web, Data JPA, Validation, Security, WebSocket, Flyway, PostgreSQL driver, Actuator, Testcontainers, JUnit 5. Empty packages from PROJECT.md Section 8. `common/TimeProvider` (injectable clock, with a test-controllable implementation). Security temporarily permits all requests.
   - Needs: nothing.
   - Done when: `./mvnw verify` passes and `/actuator/health` responds.
-- [ ] **B0.3 Local database.** `docker-compose.yml` with Postgres 16, `application.yml` profiles `local`, `test`, `dev`, and `.env.example`. README section "Run the backend".
+- [x] **B0.3 Local database.** `docker-compose.yml` with Postgres 16, `application.yml` profiles `local`, `test`, `dev`, and `.env.example`. README section "Run the backend".
   - Needs: B0.2.
-- [ ] **B0.4 Flyway and Testcontainers base.** Flyway enabled, an abstract `PostgresIntegrationTest` base class using Testcontainers that every database test extends.
+- [x] **B0.4 Flyway and Testcontainers base.** Flyway enabled, an abstract `PostgresIntegrationTest` base class using Testcontainers that every database test extends.
   - Needs: B0.2.
-- [ ] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
+- [x] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
   - Needs: B0.2, S0.1.
   - Done when: a PR shows a green check.
 
