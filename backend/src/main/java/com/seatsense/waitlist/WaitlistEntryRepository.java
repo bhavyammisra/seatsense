@@ -25,9 +25,19 @@ public interface WaitlistEntryRepository extends JpaRepository<WaitlistEntry, Lo
         order by e.joinedAt asc, e.id asc""")
     List<WaitlistEntry> queueFor(@Param("floorId") String floorId);
 
-    /** Place in the queue: how many WAITING entries joined before this time. */
+    /** Place in the queue for "any floor": every WAITING entry that joined earlier can get a seat first. */
     @Query("""
         select count(e) from WaitlistEntry e
         where e.status = com.seatsense.waitlist.WaitlistStatus.WAITING and e.joinedAt < :joinedAt""")
     long countAheadOf(@Param("joinedAt") Instant joinedAt);
+
+    /**
+     * Place in the queue for one floor: only earlier WAITING entries that want this floor or any floor
+     * compete for its seats. Someone waiting for another floor is not ahead.
+     */
+    @Query("""
+        select count(e) from WaitlistEntry e
+        where e.status = com.seatsense.waitlist.WaitlistStatus.WAITING and e.joinedAt < :joinedAt
+          and (e.floorPref is null or e.floorPref = :floorId)""")
+    long countAheadOnFloor(@Param("joinedAt") Instant joinedAt, @Param("floorId") String floorId);
 }

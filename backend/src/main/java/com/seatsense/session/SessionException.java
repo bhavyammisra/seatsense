@@ -19,11 +19,29 @@ public abstract sealed class SessionException extends RuntimeException
     public static final class SeatTaken extends SessionException {
         private final String seatCode;
         private final String alternative;
+        private final boolean held;
 
         public SeatTaken(String seatCode, String alternative) {
-            super("Seat " + seatCode + " was taken a moment ago.");
+            this(seatCode, alternative, false);
+        }
+
+        private SeatTaken(String seatCode, String alternative, boolean held) {
+            super(held
+                ? "Seat " + seatCode + " is held for a student on the waitlist."
+                : "Seat " + seatCode + " was taken a moment ago.");
             this.seatCode = seatCode;
             this.alternative = alternative;
+            this.held = held;
+        }
+
+        /** The seat is free but held for someone on the waitlist. Same error code, clearer message. */
+        public static SeatTaken heldForWaitlist(String seatCode, String alternative) {
+            return new SeatTaken(seatCode, alternative, true);
+        }
+
+        /** True when the seat is held for the waitlist rather than sat in. */
+        public boolean held() {
+            return held;
         }
 
         public String seatCode() {

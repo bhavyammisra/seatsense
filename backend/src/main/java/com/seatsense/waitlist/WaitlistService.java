@@ -1,6 +1,7 @@
 package com.seatsense.waitlist;
 
 import com.seatsense.common.TimeProvider;
+import com.seatsense.layout.Floor;
 import com.seatsense.layout.FloorRepository;
 import com.seatsense.layout.Seat;
 import com.seatsense.layout.SeatRepository;
@@ -13,6 +14,7 @@ import com.seatsense.waitlist.WaitlistEvents.Notify;
 import com.seatsense.waitlist.WaitlistEvents.SeatHeld;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,6 +43,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
  *   <li>The hold ends USED when that student sits down. If it runs out first, the
  *       seat goes to the next person in the queue.</li>
  *   <li>Leaving the queue releases any hold, which also goes to the next person.</li>
+ *   <li>Past a floor's closing time its seats are not offered to anyone.</li>
  * </ul>
  * Implements {@link SeatHoldSource}, so held seats show as HELD on every map and
  * only the holder can take them.
@@ -97,7 +101,12 @@ public class WaitlistService implements SeatHoldSource {
         if (floor != null && !floors.existsById(floor)) {
             throw WaitlistException.noSuchFloor(floor);
         }
-        entries.saveAndFlush(new WaitlistEntry(studentId, floor, time.now()));
+        try {
+            entries.saveAndFlush(new WaitlistEntry(studentId, floor, time.now()));
+        } catch (DataIntegrityViolationException sameMoment) {
+            // Two joins at the same instant both passed the check above; the V6 index lets only one in.
+            throw WaitlistException.alreadyWaiting();
+        }
         return placeOf(studentId);
     }
 
@@ -196,9 +205,22 @@ public class WaitlistService implements SeatHoldSource {
         offerToNext(seat);
     }
 
+    /**
+     * Past the floor's closing time (the same rule as the closing reset in SessionService): no offers,
+     * so seats freed at closing are not handed to the waitlist. Floors without a closing time never close.
+     */
+    private boolean floorClosed(String floorId) {
+        LocalTime now = LocalTime.now(time.clock());
+        return floors.findById(floorId)
+            .map(Floor::getCloseTime)
+            .filter(close -> !now.isBefore(close))
+            .isPresent();
+    }
+
     /** Holds the seat for the oldest WAITING student who wants its floor, if the seat is really free. */
     void offerToNext(Seat seat) {
-        if (seat.isOutOfService()
+        if (floorClosed(seat.getFloorId())
+            || seat.isOutOfService()
             || holds.findBySeatIdAndStatus(seat.getId(), SeatHold.ACTIVE).isPresent()
             || sessions.claimedSeats(seat.getFloorId()).containsKey(seat.getCode())) {
             return;
@@ -242,9 +264,13 @@ public class WaitlistService implements SeatHoldSource {
     }
 
     private Place place(WaitlistEntry entry) {
-        Integer position = entry.getStatus() == WaitlistStatus.WAITING
-            ? (int) entries.countAheadOf(entry.getJoinedAt()) + 1
-            : null;
+        Integer position = null;
+        if (entry.getStatus() == WaitlistStatus.WAITING) {
+            long ahead = entry.getFloorPref() == null
+                ? entries.countAheadOf(entry.getJoinedAt())
+                : entries.countAheadOnFloor(entry.getJoinedAt(), entry.getFloorPref());
+            position = (int) ahead + 1;
+        }
         String seat = entry.getOfferedSeatId() == null ? null
             : seats.findById(entry.getOfferedSeatId()).map(Seat::getCode).orElse(null);
         return new Place(entry.getStatus().name(), position, seat, entry.getOfferExpiresAt());

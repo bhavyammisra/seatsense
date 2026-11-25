@@ -226,8 +226,8 @@ public class SessionService implements SeatStateSource {
             throw new SessionException.SeatUnavailable(seatCode);
         }
         if (current == SeatState.HELD && !studentId.equals(activeHolds().get(seatCode))) {
-            // Held for someone else on the waitlist: treat it like a taken seat.
-            throw new SessionException.SeatTaken(seatCode, alternativeNearInCurrentTransaction(seatCode).orElse(null));
+            // Held for someone else on the waitlist: refused like a taken seat, with its own message.
+            throw SessionException.SeatTaken.heldForWaitlist(seatCode, alternativeNearInCurrentTransaction(seatCode).orElse(null));
         }
         if (!SeatStateMachine.canApply(current, SeatEvent.TAKE)) {
             throw new SessionException.SeatTaken(seatCode, alternativeNearInCurrentTransaction(seatCode).orElse(null));
