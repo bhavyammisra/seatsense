@@ -21,6 +21,14 @@ import com.seatsense.session.SessionException;
 import com.seatsense.session.SessionService;
 import com.seatsense.waitlist.WaitlistService.Place;
 import java.time.Duration;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +70,7 @@ class WaitlistServiceTest extends PostgresIntegrationTest {
         jdbc.update("delete from waitlist_entry where student_id in (" + MINE + ")");
         jdbc.update("delete from seat_session where student_id in (" + MINE + ")");
         jdbc.update("delete from app_user where username like 'wl.%'");
+        jdbc.update("update floor set close_time = null where id = '2F'");
     }
 
     private long student(int n) {
@@ -110,7 +119,10 @@ class WaitlistServiceTest extends PostgresIntegrationTest {
         assertThat(sessions.heldSeatOf(student(16))).contains("2F-D2");
 
         assertThatThrownBy(() -> sessions.takeSeat(student(19), "2F-D2"))
-            .isInstanceOf(SessionException.SeatTaken.class);
+            .isInstanceOfSatisfying(SessionException.SeatTaken.class, refused -> {
+                assertThat(refused.held()).isTrue();
+                assertThat(refused.getMessage()).isEqualTo("Seat 2F-D2 is held for a student on the waitlist.");
+            });
 
         sessions.takeSeat(student(16), "2F-D2");
         assertThat(waitlist.placeOf(student(16)).status()).isEqualTo("NONE");
@@ -202,5 +214,63 @@ class WaitlistServiceTest extends PostgresIntegrationTest {
             .andExpect(status().isNoContent());
         mvc.perform(get("/api/waitlist/me").with(user("wl.student").roles("STUDENT")))
             .andExpect(jsonPath("$.status").value("NONE"));
+    }
+
+    @Test
+    void theQueuePositionCountsOnlyPeopleAfterTheSameSeats() {
+        waitlist.join(student(16), "GF");
+        time.advance(Duration.ofSeconds(1));
+        waitlist.join(student(17), "3F");
+        time.advance(Duration.ofSeconds(1));
+        waitlist.join(student(18), "3F");
+        time.advance(Duration.ofSeconds(1));
+        waitlist.join(student(19), null);
+
+        // Nobody ahead wants 3F or any floor, so the first 3F student is first in line for 3F
+        assertThat(waitlist.placeOf(student(17)).position()).isEqualTo(1);
+        assertThat(waitlist.placeOf(student(18)).position()).isEqualTo(2);
+        // "Any floor" can be given a seat after anyone who joined earlier
+        assertThat(waitlist.placeOf(student(19)).position()).isEqualTo(4);
+    }
+
+    @Test
+    void twoJoinsAtTheSameMomentGiveAlreadyWaitingNotAnError() throws Exception {
+        long id = student(16);
+        for (int round = 0; round < 20; round++) {
+            CountDownLatch go = new CountDownLatch(1);
+            Callable<String> join = () -> {
+                go.await();
+                try {
+                    waitlist.join(id, null);
+                    return "JOINED";
+                } catch (WaitlistException refused) {
+                    return refused.errorCode();
+                }
+            };
+            ExecutorService pool = Executors.newFixedThreadPool(2);
+            try {
+                Future<String> a = pool.submit(join);
+                Future<String> b = pool.submit(join);
+                go.countDown();
+                assertThat(List.of(a.get(30, TimeUnit.SECONDS), b.get(30, TimeUnit.SECONDS)))
+                    .containsExactlyInAnyOrder("JOINED", "ALREADY_WAITING");
+            } finally {
+                pool.shutdownNow();
+            }
+            jdbc.update("delete from waitlist_entry where student_id = ?", id);
+        }
+    }
+
+    @Test
+    void seatsFreedAtClosingTimeAreNotOffered() {
+        SeatSession sitting = sessions.takeSeat(student(20), "2F-D8");
+        waitlist.join(student(16), null);
+        jdbc.update("update floor set close_time = ? where id = '2F'", LocalTime.now(time.clock()).minusMinutes(1));
+
+        sessions.closeFloorsPastClosingTime();
+
+        assertThat(sessions.session(sitting.getId()).orElseThrow().isOpen()).isFalse();
+        assertThat(waitlist.placeOf(student(16)).status()).isEqualTo("WAITING");
+        assertThat(waitlist.activeHolds()).doesNotContainKey("2F-D8");
     }
 }

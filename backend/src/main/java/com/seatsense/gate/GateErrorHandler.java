@@ -32,6 +32,7 @@ public class GateErrorHandler {
         Map<String, Object> details = new HashMap<>();
         if (e instanceof SessionException.SeatTaken taken) {
             details.put("alternative", taken.alternative() == null ? null : layout.seatView(taken.alternative()).orElse(null));
+            details.put("held", taken.held());
         }
         if (e instanceof SessionException.LibraryFull) {
             details.put("alternative", null);
