@@ -8,4 +8,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByUsername(String username);
 
     boolean existsByUsername(String username);
+
+    /** The login account of a student, for sending them waitlist notifications. */
+    Optional<AppUser> findByStudentId(Long studentId);
 }

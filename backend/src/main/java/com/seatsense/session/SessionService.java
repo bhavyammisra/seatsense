@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -70,6 +71,7 @@ public class SessionService implements SeatStateSource {
     private final ApplicationEventPublisher events;
     private final TimeProvider time;
     private final SessionSettings settings;
+    private final ObjectProvider<SeatHoldSource> holdSource;
     private final TransactionTemplate write;
     private final TransactionTemplate read;
     private final BestSeatRanker ranker = new BestSeatRanker();
@@ -84,6 +86,7 @@ public class SessionService implements SeatStateSource {
         ApplicationEventPublisher events,
         TimeProvider time,
         SessionSettings settings,
+        ObjectProvider<SeatHoldSource> holdSource,
         PlatformTransactionManager transactions) {
         this.sessions = sessions;
         this.seats = seats;
@@ -93,6 +96,7 @@ public class SessionService implements SeatStateSource {
         this.events = events;
         this.time = time;
         this.settings = settings;
+        this.holdSource = holdSource;
         this.write = new TransactionTemplate(transactions);
         this.read = new TransactionTemplate(transactions);
         this.read.setReadOnly(true);
@@ -220,6 +224,10 @@ public class SessionService implements SeatStateSource {
         SeatState current = currentState(seat);
         if (current == SeatState.OUT_OF_SERVICE) {
             throw new SessionException.SeatUnavailable(seatCode);
+        }
+        if (current == SeatState.HELD && !studentId.equals(activeHolds().get(seatCode))) {
+            // Held for someone else on the waitlist: treat it like a taken seat.
+            throw new SessionException.SeatTaken(seatCode, alternativeNearInCurrentTransaction(seatCode).orElse(null));
         }
         if (!SeatStateMachine.canApply(current, SeatEvent.TAKE)) {
             throw new SessionException.SeatTaken(seatCode, alternativeNearInCurrentTransaction(seatCode).orElse(null));
@@ -393,10 +401,16 @@ public class SessionService implements SeatStateSource {
     /** Seat states for the map (implements {@link SeatStateSource}): TAKEN and ON_BREAK seats by code. */
     @Override
     public Map<String, SeatState> claimedSeats(String floorId) {
-        return read.execute(status -> sessions.findOpenSeatsOnFloor(floorId).stream()
-            .collect(Collectors.toMap(
-                SeatSessionRepository.OpenSeat::getSeatCode,
-                o -> o.getStatus().seatState())));
+        Map<String, SeatState> claimed = new HashMap<>();
+        activeHolds().keySet().stream()
+            .filter(code -> code.startsWith(floorId + "-"))
+            .forEach(code -> claimed.put(code, SeatState.HELD));
+        read.execute(status -> {
+            sessions.findOpenSeatsOnFloor(floorId)
+                .forEach(o -> claimed.put(o.getSeatCode(), o.getStatus().seatState()));
+            return null;
+        });
+        return claimed;
     }
 
     /** The nearest free seat to {@code seatCode}, using the best-seat ranking with "near" set. */
@@ -426,6 +440,7 @@ public class SessionService implements SeatStateSource {
     /** Every claimed or out-of-service seat in the library, by code. */
     private Map<String, SeatState> currentStates() {
         Map<String, SeatState> states = new HashMap<>();
+        activeHolds().keySet().forEach(code -> states.put(code, SeatState.HELD));
         for (SeatSessionRepository.OpenSeat open : sessions.findAllOpenSeats()) {
             states.put(open.getSeatCode(), open.getStatus().seatState());
         }
@@ -441,10 +456,21 @@ public class SessionService implements SeatStateSource {
         }
         return sessions.findOpenBySeat(seat.getId())
             .map(s -> s.getStatus().seatState())
-            .orElse(SeatState.FREE);
+            .orElseGet(() -> activeHolds().containsKey(seat.getCode()) ? SeatState.HELD : SeatState.FREE);
     }
 
     /** Loads a session with its row locked, so two exits, breaks or returns of one session run one after the other. */
+    private Map<String, Long> activeHolds() {
+        SeatHoldSource holds = holdSource.getIfAvailable();
+        return holds == null ? Map.of() : holds.activeHolds();
+    }
+
+    /** The seat held for this student on the waitlist, if any. */
+    public Optional<String> heldSeatOf(Long studentId) {
+        SeatHoldSource holds = holdSource.getIfAvailable();
+        return holds == null ? Optional.empty() : holds.heldSeatOf(studentId);
+    }
+
     private SeatSession find(Long sessionId) {
         return sessions.findByIdForUpdate(sessionId).orElseThrow(() -> new SessionException.NotFound("session " + sessionId));
     }
