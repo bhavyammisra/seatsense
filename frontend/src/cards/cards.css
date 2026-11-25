@@ -1,0 +1,77 @@
+.cards {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+}
+
+.cards-header {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  margin-bottom: var(--space-5);
+}
+
+.cards-header p {
+  color: var(--ink-2);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(86mm, 1fr));
+  gap: 6mm;
+}
+
+/* Close to a real ID card: 85.6 x 54 mm. */
+.card-id {
+  width: 85.6mm;
+  height: 54mm;
+  padding: 4mm;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 2mm;
+  border: 1px solid #c9c3ba;
+  border-radius: 3mm;
+  background: #fff;
+  color: #1d1b19;
+  break-inside: avoid;
+}
+
+.card-id-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8pt;
+}
+
+.card-id-library {
+  font-weight: 600;
+  color: #8a1c2b;
+}
+
+.card-id-sample {
+  font-weight: 600;
+  color: #b06a12;
+  border: 1px solid currentColor;
+  border-radius: 1mm;
+  padding: 0 1mm;
+}
+
+.card-id-name {
+  font-size: 11pt;
+  font-weight: 600;
+}
+
+.card-id svg {
+  align-self: end;
+  max-width: 100%;
+  height: auto;
+}
+
+@media print {
+  .cards-header {
+    display: none;
+  }
+  .cards {
+    padding: 0;
+  }
+}
