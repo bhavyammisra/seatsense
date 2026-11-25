@@ -361,6 +361,8 @@ seatsense/
 
 ## 13. Work split
 
+> **Superseded:** the current split, task by task and phase by phase, is in [docs/WORKPLAN.md](WORKPLAN.md). The teammate is Bhavyam. Database and Docker work moved to Bhavyam because he has Docker. The table below is the original draft, kept for reference.
+
 Split so that **both of us own real Java logic and real UI**, and can each explain our part in the viva.
 
 | | Shefali | Teammate |
