@@ -57,6 +57,9 @@
   margin: 0 auto;
   padding: var(--space-5) var(--space-5) 140px;
   display: grid;
+  /* minmax(0, 1fr) lets the column shrink below the seat map's width, so only
+     the map scrolls sideways and the page never does. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   align-content: start;
 }
@@ -188,6 +191,7 @@
 .kiosk-map {
   padding: var(--space-5);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 
@@ -316,13 +320,4 @@
 .ticket-foot {
   color: var(--ink-2);
   font-size: 0.875rem;
-}
-
-.kiosk-map-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  font-size: 0.8125rem;
 }

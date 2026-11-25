@@ -89,6 +89,7 @@ export default function SeatMap({ floor, states, selected = [], onSeatClick, rea
                         type="button"
                         className="seat"
                         data-state={isSelected ? 'SELECTED' : state}
+                        data-power={seat.power || undefined}
                         data-accessible={seat.accessible || undefined}
                         style={{ gridColumn: seat.gx + 2, gridRow: rowY(seat.gy) }}
                         aria-label={label}
@@ -160,6 +161,10 @@ export function SeatLegend({ showSelected = true }: { showSelected?: boolean }) 
           {item.label}
         </li>
       ))}
+      <li>
+        <span className="seat seat-swatch" data-state="FREE" data-power aria-hidden="true" />
+        Charging point
+      </li>
     </ul>
   )
 }

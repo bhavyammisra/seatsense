@@ -230,6 +230,24 @@
   color: var(--seat-off);
 }
 
+/* Charging point: a short bar under the seat number. */
+.seat[data-power]::before {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  width: 8px;
+  height: 2px;
+  margin-left: -4px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.seat[data-state='TAKEN'][data-power]::before {
+  display: none;
+}
+
 /* Legend */
 .seat-legend {
   list-style: none;
