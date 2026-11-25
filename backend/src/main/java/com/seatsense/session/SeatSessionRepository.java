@@ -1,5 +1,6 @@
 package com.seatsense.session;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,6 +36,21 @@ public interface SeatSessionRepository extends JpaRepository<SeatSession, Long> 
 
     /** The student's most recent session (any status), for "Same seat as last time". */
     Optional<SeatSession> findFirstByStudentIdOrderByStartedAtDesc(Long studentId);
+
+    /** Breaks that should have ended by {@code now}. */
+    List<SeatSession> findByStatusAndBreakUntilBefore(SessionStatus status, Instant now);
+
+    /** Breaks the student has used in sessions that started at or after {@code since}. */
+    @Query("select coalesce(sum(s.breaksUsed), 0) from SeatSession s where s.studentId = :studentId and s.startedAt >= :since")
+    long breaksUsedSince(@Param("studentId") Long studentId, @Param("since") Instant since);
+
+    /** Open sessions on one floor, for the closing-time reset. */
+    @Query("""
+        select s from SeatSession s, Seat seat
+        where seat.id = s.seatId
+          and seat.floorId = :floorId
+          and s.status <> com.seatsense.session.SessionStatus.ENDED""")
+    List<SeatSession> findOpenOnFloor(@Param("floorId") String floorId);
 
     /** A seat code with the status of the open session on it. */
     interface OpenSeat {
