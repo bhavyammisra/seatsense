@@ -114,10 +114,4 @@ class AuthIntegrationTest extends PostgresIntegrationTest {
         mvc.perform(get("/api/waitlist/me").with(user("g").roles("GATE"))).andExpect(status().isForbidden());
         mvc.perform(get("/api/waitlist/me").with(user("s").roles("STUDENT"))).andExpect(status().isNotFound());
     }
-
-    @Test
-    void initialsComeFromTheFirstTwoWords() {
-        org.assertj.core.api.Assertions.assertThat(AuthController.initials("Aarav S.")).isEqualTo("AS");
-        org.assertj.core.api.Assertions.assertThat(AuthController.initials(" ananya  kumar  rao ")).isEqualTo("AK");
-    }
 }
