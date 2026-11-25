@@ -172,7 +172,12 @@ export default function KioskPage() {
           </p>
         )}
         <SeatMap floor={floor} states={states} selected={selected} onSeatClick={handleSeatClick} />
-        <SeatLegend />
+        <div className="kiosk-map-foot">
+          <SeatLegend />
+          <a href={layout.source} target="_blank" rel="noreferrer">
+            See the library in the 360 tour
+          </a>
+        </div>
       </div>
 
       <div className="kiosk-bar" role="region" aria-label="Your selection">

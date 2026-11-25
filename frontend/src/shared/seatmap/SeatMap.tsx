@@ -1,4 +1,4 @@
-import type { Floor, Seat, SeatState, SeatStates } from '../layout'
+import type { Fixture, Floor, Seat, SeatState, SeatStates } from '../layout'
 import './seatmap.css'
 
 type Props = {
@@ -19,31 +19,55 @@ const STATE_LABEL: Record<SeatState, string> = {
   OUT_OF_SERVICE: 'out of service',
 }
 
-// Cinema-style seat map for one floor. Sections are drawn top to bottom like
-// ticket categories, with row letters on both sides and the floor's landmark
-// (stairs, entrance) as the "screen" strip at the bottom.
+// Seat map for one floor, laid out like a cinema booking screen: each area of
+// the floor is a "category" drawn top to bottom, with its real furniture
+// (long tables, counters along the atrium rail, glass rooms) and the floor's
+// fixed landmark (stairs, atrium) as the "screen" strip at the bottom.
 export default function SeatMap({ floor, states, selected = [], onSeatClick, readOnly = false }: Props) {
   const selectedSet = new Set(selected)
 
   return (
     <div className="seatmap" aria-label={`${floor.name} seat map`}>
       <div className="seatmap-scroll">
-        <div className="seatmap-inner" style={{ ['--cols' as string]: floor.gridWidth }}>
+        <div className="seatmap-inner">
           {floor.sections.map((section) => {
             const seats = floor.seats.filter((s) => s.section === section.id)
+            const fixtures = floor.fixtures.filter((f) => f.section === section.id)
             const rows = section.toRow - section.fromRow + 1
+            const rowY = (gy: number) => gy - section.fromRow + 1
+
             const rowLabels = new Map<number, string>()
             for (const s of seats) rowLabels.set(s.gy, s.row)
+            const free = seats.filter((s) => (states[s.code] ?? 'FREE') === 'FREE').length
 
             return (
-              <section key={section.id} className="seatmap-section" aria-label={section.name}>
+              <section
+                key={section.id}
+                className="seatmap-section"
+                data-bookable={section.bookable || undefined}
+                aria-label={section.name}
+              >
                 <header className="seatmap-section-head">
                   <h3>{section.name}</h3>
                   <p>{section.note}</p>
+                  {section.bookable && (
+                    <span className="seatmap-section-free" data-none={free === 0 || undefined}>
+                      {free === 0 ? 'Full' : `${free} free`}
+                    </span>
+                  )}
                 </header>
-                <div className="seatmap-grid" style={{ gridTemplateRows: `repeat(${rows}, var(--seat))` }}>
+                <div
+                  className="seatmap-grid"
+                  style={{
+                    gridTemplateColumns: `var(--label) repeat(${floor.gridWidth}, var(--seat)) var(--label)`,
+                    gridTemplateRows: `repeat(${rows}, var(--seat))`,
+                  }}
+                >
+                  {fixtures.map((f, i) => (
+                    <FixtureBox key={i} fixture={f} row={rowY(f.gy)} />
+                  ))}
                   {[...rowLabels.entries()].map(([gy, letter]) => (
-                    <RowLabels key={gy} row={gy - section.fromRow + 1} letter={letter} cols={floor.gridWidth} />
+                    <RowLabels key={gy} row={rowY(gy)} letter={letter} cols={floor.gridWidth} />
                   ))}
                   {seats.map((seat) => {
                     const state = states[seat.code] ?? 'FREE'
@@ -65,9 +89,8 @@ export default function SeatMap({ floor, states, selected = [], onSeatClick, rea
                         type="button"
                         className="seat"
                         data-state={isSelected ? 'SELECTED' : state}
-                        data-power={seat.power || undefined}
                         data-accessible={seat.accessible || undefined}
-                        style={{ gridColumn: seat.gx + 2, gridRow: seat.gy - section.fromRow + 1 }}
+                        style={{ gridColumn: seat.gx + 2, gridRow: rowY(seat.gy) }}
                         aria-label={label}
                         aria-pressed={readOnly ? undefined : isSelected}
                         title={label}
@@ -87,6 +110,22 @@ export default function SeatMap({ floor, states, selected = [], onSeatClick, rea
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function FixtureBox({ fixture, row }: { fixture: Fixture; row: number }) {
+  return (
+    <div
+      className="fixture"
+      data-kind={fixture.kind}
+      style={{
+        gridColumn: `${fixture.gx + 2} / span ${fixture.w}`,
+        gridRow: `${row} / span ${fixture.h}`,
+      }}
+      aria-hidden="true"
+    >
+      {fixture.label && <span>{fixture.label}</span>}
     </div>
   )
 }
@@ -121,10 +160,6 @@ export function SeatLegend({ showSelected = true }: { showSelected?: boolean }) 
           {item.label}
         </li>
       ))}
-      <li>
-        <span className="seat seat-swatch" data-state="FREE" data-power aria-hidden="true" />
-        Charging point
-      </li>
     </ul>
   )
 }

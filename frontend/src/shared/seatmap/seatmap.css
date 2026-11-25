@@ -1,6 +1,7 @@
 .seatmap {
   --seat: 30px;
   --seat-gap: 6px;
+  --label: 22px;
   width: 100%;
 }
 
@@ -19,7 +20,6 @@
 }
 
 .seatmap-inner {
-  --label: 22px;
   width: max-content;
   margin: 0 auto;
   display: grid;
@@ -46,11 +46,92 @@
 .seatmap-section-head p {
   font-size: 0.8125rem;
   color: var(--ink-3);
+  flex: 1;
+}
+
+.seatmap-section-free {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ok);
+  white-space: nowrap;
+}
+
+.seatmap-section-free[data-none] {
+  color: var(--danger);
+}
+
+/* Furniture, drawn behind the seats. */
+.fixture {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Long reading table with the dark centre divider seen in the library. */
+.fixture[data-kind='table'] {
+  margin: 4px calc(var(--seat-gap) * -0.5);
+  background: var(--wood);
+  border: 1px solid var(--wood-edge);
+  border-radius: 3px;
+}
+
+.fixture[data-kind='table']::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  background: var(--divider);
+}
+
+.fixture[data-kind='table'] span {
+  display: none;
+}
+
+/* Counter facing a rail, wall or window: a line with what it faces. */
+.fixture[data-kind='counter'] {
+  align-items: flex-end;
+  padding-bottom: 6px;
+  border-bottom: 3px solid var(--wood-edge);
+  margin: 0 calc(var(--seat-gap) * -0.5);
+}
+
+/* Glass group room. */
+.fixture[data-kind='room'] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2px 6px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius);
+  margin: -2px;
+}
+
+/* Area shown on the map that cannot be booked. */
+.fixture[data-kind='area'] {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--surface-sunk) 0 6px,
+    transparent 6px 12px
+  );
+  color: var(--ink-2);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.8125rem;
 }
 
 .seatmap-grid {
   display: grid;
-  grid-template-columns: var(--label) repeat(var(--cols), var(--seat)) var(--label);
   gap: var(--seat-gap);
   justify-content: center;
 }
@@ -147,24 +228,6 @@
   border-color: var(--seat-off);
   background: transparent;
   color: var(--seat-off);
-}
-
-/* Charging point: a short bar under the seat number. */
-.seat[data-power]::before {
-  content: '';
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  width: 8px;
-  height: 2px;
-  margin-left: -4px;
-  border-radius: 1px;
-  background: currentColor;
-  opacity: 0.7;
-}
-
-.seat[data-state='TAKEN'][data-power]::before {
-  display: none;
 }
 
 /* Legend */

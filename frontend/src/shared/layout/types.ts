@@ -26,23 +26,41 @@ export type Section = {
   name: string
   zone: Zone
   note: string
+  /** False for areas that are drawn but cannot be booked (seminar hall, lounge). */
+  bookable: boolean
   fromRow: number
   toRow: number
+}
+
+/** Furniture and rooms drawn on the map. Not clickable. */
+export type Fixture = {
+  kind: 'table' | 'counter' | 'room' | 'area'
+  section: string
+  gx: number
+  gy: number
+  w: number
+  h: number
+  label: string
 }
 
 export type Floor = {
   id: string
   number: number
   name: string
+  short: string
   landmark: string
+  /** Scene labels in the library's 360 walkthrough that show this floor. */
+  tourScenes: string[]
   gridWidth: number
   gridHeight: number
   sections: Section[]
+  fixtures: Fixture[]
   seats: Seat[]
 }
 
 export type Layout = {
   library: string
+  source: string
   provisional: boolean
   note: string
   totalSeats: number

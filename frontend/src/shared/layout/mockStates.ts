@@ -20,11 +20,10 @@ function hash(text: string): number {
 }
 
 const FULLNESS: Record<string, number> = {
-  GF: 0.5,
-  '1F': 0.68,
-  '2F': 0.78,
-  '3F': 0.93,
-  '4F': 1,
+  GF: 0.6,
+  '1F': 0.8,
+  '2F': 0.72,
+  '3F': 1,
 }
 
 export function mockSeatStates(layout: Layout): SeatStates {
@@ -36,7 +35,7 @@ export function mockSeatStates(layout: Layout): SeatStates {
       let state: SeatState = r < fullness ? 'TAKEN' : 'FREE'
       if (state === 'TAKEN' && r > fullness - 0.04) state = 'ON_BREAK'
       if (state === 'FREE' && r > 0.985) state = 'HELD'
-      if (seat.code.endsWith('-C14') || seat.code.endsWith('-D3')) state = 'OUT_OF_SERVICE'
+      if (seat.code.endsWith('-C9') || seat.code.endsWith('-D3')) state = 'OUT_OF_SERVICE'
       states[seat.code] = state
     }
   }

@@ -32,6 +32,10 @@
   --seat-held-bg: #e8eef6;
   --seat-off: #b9b3aa;
 
+  --wood: #e9c9a0;
+  --wood-edge: #c58a4e;
+  --divider: #3a332c;
+
   --ok: #2f6b4f;
   --warn: #b06a12;
   --danger: #a3262f;
@@ -79,6 +83,10 @@
     --seat-held-bg: #1c2633;
     --seat-off: #4a4640;
 
+    --wood: #4a3524;
+    --wood-edge: #7a5634;
+    --divider: #15110d;
+
     --ok: #6fbf96;
     --warn: #e0a14a;
     --danger: #e0707a;
@@ -111,6 +119,9 @@
   --seat-held: #8db0de;
   --seat-held-bg: #1c2633;
   --seat-off: #4a4640;
+  --wood: #4a3524;
+  --wood-edge: #7a5634;
+  --divider: #15110d;
   --ok: #6fbf96;
   --warn: #e0a14a;
   --danger: #e0707a;
