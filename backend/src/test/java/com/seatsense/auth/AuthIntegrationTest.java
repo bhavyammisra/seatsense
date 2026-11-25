@@ -106,7 +106,8 @@ class AuthIntegrationTest extends PostgresIntegrationTest {
     void gateEndpointsAreForTheGateOnly() throws Exception {
         mvc.perform(post("/api/gate/scan").with(csrf()).with(user("s").roles("STUDENT"))).andExpect(status().isForbidden());
         mvc.perform(post("/api/gate/scan").with(csrf()).with(user("l").roles("LIBRARIAN"))).andExpect(status().isForbidden());
-        mvc.perform(post("/api/gate/scan").with(csrf()).with(user("g").roles("GATE"))).andExpect(status().isNotFound());
+        // S1.5 built the endpoint: the gate gets through security and is told the empty body is invalid
+        mvc.perform(post("/api/gate/scan").with(csrf()).with(user("g").roles("GATE"))).andExpect(status().isBadRequest());
     }
 
     @Test
