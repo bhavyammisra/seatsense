@@ -44,7 +44,7 @@ class AuthIntegrationTest extends PostgresIntegrationTest {
     @Test
     void publicAndHealthNeedNoLogin() throws Exception {
         mvc.perform(get("/actuator/health")).andExpect(status().isOk());
-        mvc.perform(get("/api/public/availability")).andExpect(status().isNotFound()); // passes security, not built yet
+        mvc.perform(get("/api/public/availability")).andExpect(status().isOk()); // B1.4: open to everyone
     }
 
     @Test
