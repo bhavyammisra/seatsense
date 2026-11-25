@@ -57,7 +57,7 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
   - Needs: B0.2.
 - [x] **B0.4 Flyway and Testcontainers base.** Flyway enabled, an abstract `PostgresIntegrationTest` base class using Testcontainers that every database test extends.
   - Needs: B0.2.
-- [ ] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
+- [x] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
   - Needs: B0.2, S0.1.
   - Done when: a PR shows a green check.
 
@@ -93,7 +93,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S0.5.
 - [ ] **S1.2 Student lookup.** `StudentService.findByCardId`, with tests.
   - Needs: S0.5.
-- [ ] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
+- [x] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
   - Needs: nothing (can start any time).
 - [ ] **S1.4 Sessions.** `seat_session` entity and service: create a session for a chosen seat, end it on exit. Publishes domain events through Spring's `ApplicationEventPublisher`. Handles the unique-constraint violation from B1.1 by returning 409 with an alternative seat.
   - Needs: S1.2, S1.3, B1.1.

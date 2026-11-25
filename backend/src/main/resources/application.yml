@@ -21,6 +21,10 @@ management:
       exposure:
         include: health
 
+seatsense:
+  # The library's time zone. Every "now" goes through TimeProvider, which uses this.
+  time-zone: Asia/Kolkata
+
 ---
 # local: your own machine, Postgres from docker-compose.yml.
 spring:

@@ -4,7 +4,9 @@ Live library seat finder for our Enterprising Web Applications (Java) course pro
 
 ## Run the backend
 
-You need JDK 21 or newer and Docker Desktop. Maven is not needed: the repo has a Maven wrapper.
+You need JDK 21 or newer and a Postgres 16 database. Maven is not needed: the repo has a Maven wrapper.
+
+The steps below use Docker Desktop for Postgres. Without Docker, any local Postgres 16 works (for example Postgres.app on a Mac): create a database and user with the same values as in your `.env`, skip step 2, and carry on.
 
 1. Create your `.env` from the example and set your own password in it:
    ```
@@ -20,6 +22,8 @@ You need JDK 21 or newer and Docker Desktop. Maven is not needed: the repo has a
    ./mvnw spring-boot:run
    ```
    On Windows PowerShell use `.\mvnw.cmd spring-boot:run`.
+
+   Always start the backend from the `backend/` folder (this applies to `java -jar` too). It reads the database settings from `../.env`, so started from anywhere else it will not find them.
 4. Check it is up: http://localhost:8080/actuator/health should show `{"status":"UP"}`.
 
 Flyway applies every migration in `backend/src/main/resources/db/migration` on startup.
