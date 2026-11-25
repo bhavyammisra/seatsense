@@ -381,8 +381,10 @@
   color: var(--ink);
 }
 
+/* Strong cells are near the accent: the surface colour reads on them in light and dark themes. */
 .dash-heat td[data-strong] {
-  color: var(--accent-ink);
+  color: var(--surface);
+  font-weight: 600;
 }
 
 .dash-heat .dash-heat-empty,

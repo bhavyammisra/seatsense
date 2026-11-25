@@ -92,7 +92,7 @@ export default function AnalyticsPanel({ refreshKey }: { refreshKey: number }) {
                           <td
                             key={h}
                             title={`${name} ${hourLabel(h)}: ${pct}% of seats taken`}
-                            data-strong={pct >= 55 || undefined}
+                            data-strong={pct >= 70 || undefined}
                             style={{ background: `color-mix(in oklab, var(--accent) ${pct}%, var(--surface))` }}
                           >
                             {pct}
