@@ -1,15 +1,13 @@
 package com.seatsense.auth;
 
 import com.seatsense.common.ApiError;
+import com.seatsense.student.StudentRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,14 +39,14 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository contextRepository;
     private final AppUserRepository users;
-    private final JdbcTemplate jdbc;
+    private final StudentRepository students;
 
     public AuthController(AuthenticationManager authenticationManager, SecurityContextRepository contextRepository,
-                          AppUserRepository users, JdbcTemplate jdbc) {
+                          AppUserRepository users, StudentRepository students) {
         this.authenticationManager = authenticationManager;
         this.contextRepository = contextRepository;
         this.users = users;
-        this.jdbc = jdbc;
+        this.students = students;
     }
 
     @PostMapping("/login")
@@ -77,21 +75,12 @@ public class AuthController {
             .body(ApiError.of("NOT_LOGGED_IN", "Wrong username or password."));
     }
 
-    // shortcut: reads the student table directly; switch to the student module's service once S1.2 lands
     private StudentSummary student(Long id) {
         if (id == null) {
             return null;
         }
-        return jdbc.queryForObject("SELECT id, name, is_sample FROM student WHERE id = ?",
-            (rs, i) -> new StudentSummary(rs.getLong("id"), rs.getString("name"),
-                initials(rs.getString("name")), rs.getBoolean("is_sample")), id);
-    }
-
-    static String initials(String name) {
-        return Arrays.stream(name.trim().split("\\s+"))
-            .filter(w -> !w.isEmpty())
-            .map(w -> w.substring(0, 1).toUpperCase())
-            .limit(2)
-            .collect(Collectors.joining());
+        return students.findById(id)
+            .map(s -> new StudentSummary(s.getId(), s.getName(), s.getInitials(), s.isSample()))
+            .orElse(null);
     }
 }
