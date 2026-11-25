@@ -57,7 +57,7 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
   - Needs: B0.2.
 - [x] **B0.4 Flyway and Testcontainers base.** Flyway enabled, an abstract `PostgresIntegrationTest` base class using Testcontainers that every database test extends.
   - Needs: B0.2.
-- [ ] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
+- [x] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
   - Needs: B0.2, S0.1.
   - Done when: a PR shows a green check.
 
