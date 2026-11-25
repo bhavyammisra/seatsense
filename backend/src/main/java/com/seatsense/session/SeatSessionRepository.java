@@ -1,12 +1,19 @@
 package com.seatsense.session;
 
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface SeatSessionRepository extends JpaRepository<SeatSession, Long> {
+
+    /** The session row, locked until the transaction ends, so two exits of one session run one after the other. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select s from SeatSession s where s.id = :id")
+    Optional<SeatSession> findByIdForUpdate(@Param("id") Long id);
 
     /** The student's open (ACTIVE or ON_BREAK) session, if any. At most one exists (V2 index). */
     @Query("select s from SeatSession s where s.studentId = :studentId and s.status <> com.seatsense.session.SessionStatus.ENDED")

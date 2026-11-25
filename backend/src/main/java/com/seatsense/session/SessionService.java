@@ -123,7 +123,7 @@ public class SessionService implements SeatStateSource {
      */
     public SeatSession leave(Long sessionId) {
         return write.execute(status -> {
-            SeatSession session = sessions.findById(sessionId)
+            SeatSession session = sessions.findByIdForUpdate(sessionId)
                 .orElseThrow(() -> new SessionException.NotFound("session " + sessionId));
             SeatState seatState = session.isOpen() ? session.getStatus().seatState() : SeatState.FREE;
             SeatStateMachine.next(seatState, SeatEvent.LEAVE);

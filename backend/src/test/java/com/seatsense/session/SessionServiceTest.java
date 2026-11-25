@@ -206,6 +206,39 @@ class SessionServiceTest extends PostgresIntegrationTest {
     }
 
     @Test
+    void whenTheSameSessionIsLeftTenTimesAtOnceOnlyOneSucceeds() throws Exception {
+        SeatSession session = service.takeSeat(student(31), "2F-C1");
+        int threads = 10;
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        CountDownLatch go = new CountDownLatch(1);
+        List<Future<Boolean>> results = new ArrayList<>();
+        try {
+            for (int i = 0; i < threads; i++) {
+                results.add(pool.submit(() -> {
+                    go.await();
+                    try {
+                        service.leave(session.getId());
+                        return true;
+                    } catch (InvalidSeatTransitionException alreadyLeft) {
+                        return false;
+                    }
+                }));
+            }
+            go.countDown();
+            int succeeded = 0;
+            for (Future<Boolean> result : results) {
+                if (result.get()) {
+                    succeeded++;
+                }
+            }
+            assertThat(succeeded).isEqualTo(1);
+            assertThat(events.stream(SeatFreed.class).filter(e -> e.seatCode().equals("2F-C1"))).hasSize(1);
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
     void indexNamesAreFoundAnywhereInTheErrorChain() {
         RuntimeException cause = new RuntimeException(
             "duplicate key value violates unique constraint \"seat_session_one_open_per_seat\"");
