@@ -62,7 +62,7 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
   - Done when: a PR shows a green check.
 
 ### Shefali (no Docker needed)
-- [ ] **S0.1 Frontend skeleton.** React + Vite + TypeScript in `frontend/`. Folders `src/shared`, `src/kiosk`, `src/scanner`, `src/public`, `src/portal`, `src/dashboard`. Routes `/kiosk`, `/scanner`, `/`, `/portal`, `/dashboard`. Design tokens (colours, type, spacing) following PROJECT.md Section 17, with light and dark mode. Favicon. Dev proxy to the backend on port 8080.
+- [x] **S0.1 Frontend skeleton.** React + Vite + TypeScript in `frontend/`. Folders `src/shared`, `src/kiosk`, `src/scanner`, `src/public`, `src/portal`, `src/dashboard`. Routes `/kiosk`, `/scanner`, `/`, `/portal`, `/dashboard`. Design tokens (colours, type, spacing) following PROJECT.md Section 17, with light and dark mode. Favicon. Dev proxy to the backend on port 8080.
   - Needs: nothing.
 - [ ] **S0.2 API contract.** Write `docs/api.md` from PROJECT.md Section 10: every endpoint with request and response JSON, error codes, WebSocket topics and payloads, and the list of domain event names (`SeatTaken`, `SeatFreed`, `BreakStarted`, `BreakEnded`, `SessionEnded`, ...). Bhavyam approves.
   - Needs: nothing.

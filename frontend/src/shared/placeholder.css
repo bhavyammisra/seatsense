@@ -1,0 +1,16 @@
+.placeholder {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.placeholder-brand {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.placeholder-meta {
+  color: var(--ink-2);
+}
