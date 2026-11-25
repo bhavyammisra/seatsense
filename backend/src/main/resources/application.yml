@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: seatsense
+  # Reads POSTGRES_* from the repo-root .env when the backend runs from backend/. Optional, so CI and tests work without it.
+  config:
+    import: optional:file:../.env[.properties]
+  profiles:
+    default: local
+    group:
+      dev: local
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+seatsense:
+  # The library's time zone. Every "now" goes through TimeProvider, which uses this.
+  time-zone: Asia/Kolkata
+
+---
+# local: your own machine, Postgres from docker-compose.yml.
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://localhost:${POSTGRES_PORT:5432}/${POSTGRES_DB:seatsense}
+    username: ${POSTGRES_USER:seatsense}
+    password: ${POSTGRES_PASSWORD}
+
+---
+# dev: local plus demo-only features (simulator endpoints, B3.1). Never use it on a shared server.
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+# test: integration tests. The database comes from Testcontainers (see PostgresIntegrationTest).
+spring:
+  config:
+    activate:
+      on-profile: test
+logging:
+  level:
+    org.testcontainers: WARN

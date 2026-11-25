@@ -50,23 +50,23 @@ Goal: a repo where both of us can build, test and run the skeleton, with CI on e
 ### Bhavyam (needs Docker)
 - [ ] **B0.1 Branch protection.** GitHub Settings → Branches → protect `main`: require a pull request with 1 approval, require CI to pass (once B0.5 exists). Only the repo owner can do this.
   - Needs: nothing.
-- [ ] **B0.2 Backend skeleton.** Spring Boot 3.5.x, Java 21, Maven wrapper, group `com.seatsense`. Dependencies: Web, Data JPA, Validation, Security, WebSocket, Flyway, PostgreSQL driver, Actuator, Testcontainers, JUnit 5. Empty packages from PROJECT.md Section 8. `common/TimeProvider` (injectable clock, with a test-controllable implementation). Security temporarily permits all requests.
+- [x] **B0.2 Backend skeleton.** Spring Boot 3.5.x, Java 21, Maven wrapper, group `com.seatsense`. Dependencies: Web, Data JPA, Validation, Security, WebSocket, Flyway, PostgreSQL driver, Actuator, Testcontainers, JUnit 5. Empty packages from PROJECT.md Section 8. `common/TimeProvider` (injectable clock, with a test-controllable implementation). Security temporarily permits all requests.
   - Needs: nothing.
   - Done when: `./mvnw verify` passes and `/actuator/health` responds.
-- [ ] **B0.3 Local database.** `docker-compose.yml` with Postgres 16, `application.yml` profiles `local`, `test`, `dev`, and `.env.example`. README section "Run the backend".
+- [x] **B0.3 Local database.** `docker-compose.yml` with Postgres 16, `application.yml` profiles `local`, `test`, `dev`, and `.env.example`. README section "Run the backend".
   - Needs: B0.2.
-- [ ] **B0.4 Flyway and Testcontainers base.** Flyway enabled, an abstract `PostgresIntegrationTest` base class using Testcontainers that every database test extends.
+- [x] **B0.4 Flyway and Testcontainers base.** Flyway enabled, an abstract `PostgresIntegrationTest` base class using Testcontainers that every database test extends.
   - Needs: B0.2.
-- [ ] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
+- [x] **B0.5 CI.** GitHub Actions workflow on every PR and push to `main`: build and test the backend (Testcontainers runs in CI), build and lint the frontend.
   - Needs: B0.2, S0.1.
   - Done when: a PR shows a green check.
 
 ### Shefali (no Docker needed)
 - [x] **S0.1 Frontend skeleton.** React + Vite + TypeScript in `frontend/`. Folders `src/shared`, `src/kiosk`, `src/scanner`, `src/public`, `src/portal`, `src/dashboard`. Routes `/kiosk`, `/scanner`, `/`, `/portal`, `/dashboard`. Design tokens (colours, type, spacing) following PROJECT.md Section 17, with light and dark mode. Favicon. Dev proxy to the backend on port 8080.
   - Needs: nothing.
-- [ ] **S0.2 API contract.** Write `docs/api.md` from PROJECT.md Section 10: every endpoint with request and response JSON, error codes, WebSocket topics and payloads, and the list of domain event names (`SeatTaken`, `SeatFreed`, `BreakStarted`, `BreakEnded`, `SessionEnded`, ...). Bhavyam approves.
+- [x] **S0.2 API contract.** Write `docs/api.md` from PROJECT.md Section 10: every endpoint with request and response JSON, error codes, WebSocket topics and payloads, and the list of domain event names (`SeatTaken`, `SeatFreed`, `BreakStarted`, `BreakEnded`, `SessionEnded`, ...). Bhavyam approves.
   - Needs: nothing.
-- [ ] **S0.3 Decisions log.** Create `docs/decisions.md` with the decisions in this file and PROJECT.md Section 4, one line each with a date.
+- [x] **S0.3 Decisions log.** Create `docs/decisions.md` with the decisions in this file and PROJECT.md Section 4, one line each with a date.
   - Needs: nothing.
 - [ ] **S0.4 Library survey (real world, with Bhavyam if possible).** Count seats on each floor, sketch the layout (rows, tables), mark charging points, windows and quiet or discussion zones. Note opening and closing times and current library rules. Save as `docs/layout/` (photos of sketches plus a `layout.json` with every seat's code, row, column, table, x, y and features).
   - Needs: nothing.
@@ -92,7 +92,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S0.5.
 - [ ] **S1.2 Student lookup.** `StudentService.findByCardId`, with tests.
   - Needs: S0.5.
-- [ ] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
+- [x] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
   - Needs: nothing (can start any time).
 - [ ] **S1.4 Sessions.** `seat_session` entity and service: create a session for a chosen seat, end it on exit. Publishes domain events through Spring's `ApplicationEventPublisher`. Handles the unique-constraint violation from B1.1 by returning 409 with an alternative seat.
   - Needs: S1.2, S1.3, B1.1.
