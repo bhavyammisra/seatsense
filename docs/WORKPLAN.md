@@ -107,7 +107,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S1.5, S1.6.
 
 ### Bhavyam
-- [ ] **B1.1 V2 migration: sessions and scans.** `seat_session` and `scan_event` tables, including the two partial unique indexes from PROJECT.md Section 9 (one active session per seat, one per student).
+- [x] **B1.1 V2 migration: sessions and scans.** `seat_session` and `scan_event` tables, including the two partial unique indexes from PROJECT.md Section 9 (one active session per seat, one per student).
   - Needs: S0.5.
 - [ ] **B1.2 Concurrency proof.** Testcontainers test: 200 threads take the same seat at once, exactly one ACTIVE session exists afterwards. Same for one student taking two seats. Runs in CI.
   - Needs: B1.1, S1.4.
