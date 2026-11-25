@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { fetchMe, login, logout, type Me } from '../shared/api/authApi'
+import { setOutOfService, simClock, simReset, simRush, simulatorAvailable } from '../shared/api/adminApi'
 import {
   fetchAvailability,
   fetchFloors,
@@ -9,7 +10,7 @@ import {
   type Availability,
   type Headcount,
 } from '../shared/api/layoutApi'
-import type { Floor, SeatState, SeatStates } from '../shared/layout'
+import type { Floor, Seat, SeatState, SeatStates } from '../shared/layout'
 import { reconnectLive, useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
 import './dashboard.css'
@@ -147,6 +148,39 @@ function Dashboard() {
   const [floorId, setFloorId] = useState<string | null>(null)
   const [map, setMap] = useState<{ floor: Floor; states: SeatStates } | null>(null)
   const [error, setError] = useState(false)
+  const [pending, setPending] = useState<Seat | null>(null)
+  const [actionMessage, setActionMessage] = useState<string | null>(null)
+  const [demo, setDemo] = useState(false)
+  const [demoBusy, setDemoBusy] = useState(false)
+
+  useEffect(() => {
+    simulatorAvailable().then(setDemo)
+  }, [])
+
+  async function toggleService(seat: Seat, outOfService: boolean) {
+    setActionMessage(null)
+    try {
+      await setOutOfService(seat.code, outOfService)
+      setActionMessage(outOfService ? `${seat.code} is out of service.` : `${seat.code} is back in service.`)
+    } catch {
+      setActionMessage(`${seat.code} could not be changed. Only a free seat can go out of service.`)
+    } finally {
+      setPending(null)
+    }
+  }
+
+  async function runDemo(action: () => Promise<unknown>, done: string) {
+    setDemoBusy(true)
+    setActionMessage(null)
+    try {
+      await action()
+      setActionMessage(done)
+    } catch {
+      setActionMessage('The demo action did not go through.')
+    } finally {
+      setDemoBusy(false)
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -255,11 +289,77 @@ function Dashboard() {
         </table>
       </section>
 
+      {demo && (
+        <section className="dash-panel dash-demo" aria-label="Demo controls">
+          <h2>Demo controls</h2>
+          <p className="dash-muted">
+            Only on a dev run. Simulated students fill the library like an exam evening; the clock moves forward so
+            breaks and waitlist offers run out on stage.
+          </p>
+          <div className="dash-demo-buttons">
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={demoBusy}
+              onClick={() => runDemo(simRush, 'Exam evening started: the library is filling up.')}
+            >
+              Exam evening rush
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={demoBusy}
+              onClick={() => runDemo(() => simClock(30), 'Clock moved 30 minutes forward.')}
+            >
+              Clock +30 min
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={demoBusy}
+              onClick={() => runDemo(simReset, 'Everyone has left and the waitlist is empty.')}
+            >
+              Reset
+            </button>
+          </div>
+        </section>
+      )}
+
       <section className="dash-panel dash-map" aria-label="Seat map">
         <h2>{floors.find((f) => f.id === floorId)?.name ?? 'Seat map'}</h2>
+        <p className="dash-muted dash-hint">Click a free seat to take it out of service, or a dotted seat to put it back.</p>
+        {pending && (
+          <div className="dash-confirm" role="alertdialog" aria-label="Confirm seat change">
+            <span>
+              {map?.states[pending.code] === 'OUT_OF_SERVICE'
+                ? `Put ${pending.code} back into service?`
+                : `Take ${pending.code} out of service?`}
+            </span>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => toggleService(pending, map?.states[pending.code] !== 'OUT_OF_SERVICE')}
+            >
+              Confirm
+            </button>
+            <button type="button" className="btn btn-ghost" onClick={() => setPending(null)}>
+              Cancel
+            </button>
+          </div>
+        )}
+        {actionMessage && (
+          <p className="dash-action" role="status">
+            {actionMessage}
+          </p>
+        )}
         {map && map.floor.id === floorId ? (
           <>
-            <SeatMap floor={map.floor} states={map.states} readOnly />
+            <SeatMap
+              floor={map.floor}
+              states={map.states}
+              clickableStates={['FREE', 'OUT_OF_SERVICE']}
+              onSeatClick={setPending}
+            />
             <SeatLegend showSelected={false} />
           </>
         ) : (

@@ -83,7 +83,7 @@ public class GateService {
             mode,
             new StudentView(student.getId(), student.getName(), student.getInitials(), student.isSample()),
             mode == ScanMode.ENTRY ? sessions.lastSeatOf(student.getId()).orElse(null) : null,
-            null, // held seats arrive with the waitlist (B2.x)
+            mode == ScanMode.ENTRY ? sessions.heldSeatOf(student.getId()).orElse(null) : null,
             session);
         events.publishEvent(new CardScanned(gateId, result));
         return result;

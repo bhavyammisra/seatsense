@@ -321,3 +321,101 @@
   color: var(--ink-2);
   font-size: 0.875rem;
 }
+
+/* Real-API kiosk screens */
+.kiosk-free {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ok);
+}
+
+.kiosk-free[data-full] {
+  color: var(--danger);
+}
+
+.kiosk-panel {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.kiosk-pick {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.kiosk-idle {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-7) 0;
+  text-align: center;
+}
+
+.kiosk-idle h1 {
+  font-size: 2.25rem;
+}
+
+.kiosk-idle-hint {
+  color: var(--ink-3);
+}
+
+.kiosk-gather h1 {
+  font-size: 1.5rem;
+}
+
+.kiosk-gather-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.kiosk-gather-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 52px;
+  font-weight: 500;
+}
+
+.kiosk-gather-waiting {
+  color: var(--ink-3);
+  font-weight: 400 !important;
+  padding-left: var(--space-4);
+  border-left: 3px dashed var(--line-strong);
+}
+
+.kiosk-exit-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.kiosk-exit-choice {
+  min-height: 96px;
+  flex-direction: column;
+  font-size: 1.125rem;
+}
+
+.kiosk-exit-choice span {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+@media (max-width: 640px) {
+  .kiosk-exit-choices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kiosk-idle h1 {
+    font-size: 1.5rem;
+  }
+  .kiosk-bar-actions {
+    flex-wrap: wrap;
+  }
+}

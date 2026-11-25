@@ -239,3 +239,30 @@
     padding: var(--space-4) var(--space-3);
   }
 }
+
+.dash-hint {
+  font-size: 0.875rem;
+}
+
+.dash-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  font-weight: 500;
+}
+
+.dash-action {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.dash-demo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

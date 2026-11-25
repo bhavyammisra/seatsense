@@ -52,4 +52,14 @@ public final class SessionEvents {
             return SeatState.TAKEN;
         }
     }
+
+    /** Staff took a seat out of service or put it back. */
+    public record SeatServiceChanged(String seatCode, String floorId, boolean outOfService, Instant at)
+        implements SeatStateEvent {
+
+        @Override
+        public SeatState newState() {
+            return outOfService ? SeatState.OUT_OF_SERVICE : SeatState.FREE;
+        }
+    }
 }

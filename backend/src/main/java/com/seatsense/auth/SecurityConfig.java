@@ -2,10 +2,12 @@ package com.seatsense.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seatsense.common.ApiError;
+import com.seatsense.common.SpaRoutes;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -41,8 +43,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // /ws: the socket handshake; who may subscribe to what is checked per message (WebSocketSecurityConfig)
                 .requestMatchers("/api/public/**", "/api/auth/login", "/actuator/health", "/error", "/ws").permitAll()
+                // The built React app on the hosted demo (SpaRoutes). Each page asks for a login itself where needed.
+                .requestMatchers(HttpMethod.GET, "/", "/index.html", "/assets/**", "/favicon.svg").permitAll()
+                .requestMatchers(HttpMethod.GET, SpaRoutes.PAGES).permitAll()
                 .requestMatchers("/api/gate/**", "/api/sessions/**").hasRole(Role.GATE.name())
-                .requestMatchers("/api/admin/**").hasRole(Role.LIBRARIAN.name())
+                .requestMatchers("/api/admin/**", "/api/sim/**").hasRole(Role.LIBRARIAN.name())
                 .requestMatchers("/api/waitlist/**", "/api/seats/*/report").hasRole(Role.STUDENT.name())
                 .anyRequest().authenticated())
             .csrf(csrf -> csrf

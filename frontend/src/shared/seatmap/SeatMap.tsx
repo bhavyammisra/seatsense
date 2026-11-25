@@ -7,8 +7,10 @@ type Props = {
   selected?: string[]
   /** Seats that cannot be picked are still shown; only FREE seats are clickable. */
   onSeatClick?: (seat: Seat) => void
-  /** Read-only maps (public site, dashboard) never react to clicks. */
+  /** Read-only maps (public site) never react to clicks. */
   readOnly?: boolean
+  /** Which seat states can be clicked. Default: only FREE seats (the seat picker). */
+  clickableStates?: SeatState[]
 }
 
 const STATE_LABEL: Record<SeatState, string> = {
@@ -23,7 +25,14 @@ const STATE_LABEL: Record<SeatState, string> = {
 // the floor is a "category" drawn top to bottom, with its real furniture
 // (long tables, counters along the atrium rail, glass rooms) and the floor's
 // fixed landmark (stairs, atrium) as the "screen" strip at the bottom.
-export default function SeatMap({ floor, states, selected = [], onSeatClick, readOnly = false }: Props) {
+export default function SeatMap({
+  floor,
+  states,
+  selected = [],
+  onSeatClick,
+  readOnly = false,
+  clickableStates = ['FREE'],
+}: Props) {
   const selectedSet = new Set(selected)
 
   return (
@@ -72,7 +81,7 @@ export default function SeatMap({ floor, states, selected = [], onSeatClick, rea
                   {seats.map((seat) => {
                     const state = states[seat.code] ?? 'FREE'
                     const isSelected = selectedSet.has(seat.code)
-                    const clickable = !readOnly && state === 'FREE'
+                    const clickable = !readOnly && clickableStates.includes(state)
                     const label = [
                       `Seat ${seat.code}`,
                       isSelected ? 'selected' : STATE_LABEL[state],
