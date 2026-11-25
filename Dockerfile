@@ -8,11 +8,12 @@ RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-FROM eclipse-temurin:21-jdk AS api
+# The Maven image already has Maven, so the build does not depend on the wrapper's download.
+FROM maven:3.9-eclipse-temurin-21 AS api
 WORKDIR /app/backend
 COPY backend/ ./
 COPY --from=web /app/frontend/dist/ src/main/resources/static/
-RUN ./mvnw -q -DskipTests package
+RUN mvn -q -B -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
