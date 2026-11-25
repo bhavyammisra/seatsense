@@ -129,6 +129,20 @@ public class WaitlistService implements SeatHoldSource {
         return place(entry);
     }
 
+    /** Cancels every live place and active hold without offering seats on (demo reset). */
+    @Transactional
+    public void clearAll() {
+        Instant now = time.now();
+        holds.findByStatus(SeatHold.ACTIVE).forEach(hold -> {
+            hold.close("CANCELLED");
+            Seat seat = seats.findById(hold.getSeatId()).orElseThrow();
+            events.publishEvent(new HoldReleased(seat.getCode(), seat.getFloorId(), "CANCELLED", now));
+        });
+        entries.findAll().stream()
+            .filter(e -> e.getStatus().isLive())
+            .forEach(e -> e.end(WaitlistStatus.CANCELLED, now));
+    }
+
     // ---------------------------------------------------------------- reacting to seats
 
     /** A seat became free: offer it to the next person waiting. Runs after the freeing transaction commits. */

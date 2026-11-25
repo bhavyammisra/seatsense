@@ -67,6 +67,11 @@ public class Seat {
         // for JPA
     }
 
+    /** Staff take the seat out of use, or put it back. Rules about when are in the session module. */
+    public void setOutOfService(boolean outOfService) {
+        this.outOfService = outOfService;
+    }
+
     public Long getId() {
         return id;
     }

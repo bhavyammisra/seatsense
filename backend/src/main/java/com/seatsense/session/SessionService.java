@@ -357,6 +357,42 @@ public class SessionService implements SeatStateSource {
         return ended == null ? 0 : ended;
     }
 
+    /**
+     * Ends every open session (reason ADMIN), for the demo reset and the staff
+     * sweep. Returns how many ended.
+     */
+    public int endAllOpen() {
+        Integer ended = write.execute(status -> {
+            int count = 0;
+            for (Floor floor : floors.findAll()) {
+                for (SeatSession open : sessions.findOpenOnFloor(floor.getId())) {
+                    end(open, EndReason.ADMIN);
+                    count++;
+                }
+            }
+            return count;
+        });
+        return ended == null ? 0 : ended;
+    }
+
+    /**
+     * Takes a seat out of service or puts it back (B3.3). Only a FREE seat can go
+     * out of service, so staff never remove a seat from under someone.
+     *
+     * @throws SessionException.NotFound      no such seat
+     * @throws InvalidSeatTransitionException the seat is taken, on break or held
+     */
+    public Seat setOutOfService(String seatCode, boolean outOfService) {
+        return write.execute(status -> {
+            Seat seat = seats.findByCode(seatCode).orElseThrow(() -> new SessionException.NotFound("seat " + seatCode));
+            SeatState current = currentState(seat);
+            SeatStateMachine.next(current, outOfService ? SeatEvent.MARK_OUT_OF_SERVICE : SeatEvent.RETURN_TO_SERVICE);
+            seat.setOutOfService(outOfService);
+            events.publishEvent(new SessionEvents.SeatServiceChanged(seat.getCode(), seat.getFloorId(), outOfService, time.now()));
+            return seat;
+        });
+    }
+
     private SeatSession end(SeatSession session, EndReason reason) {
         Instant now = time.now();
         session.end(reason, now);

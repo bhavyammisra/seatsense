@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates the SAMPLE login accounts on a local or dev run, so nobody has to insert password hashes by hand.
- * The password comes from SAMPLE_PASSWORD in .env and is never committed. Accounts that already exist are left alone.
+ * Creates the SAMPLE login accounts on a local, dev or hosted-demo (cloud) run, so nobody has to insert password hashes by hand.
+ * The password comes from SAMPLE_PASSWORD (.env locally, the host's settings in the cloud) and is never committed. Accounts that already exist are left alone.
  *
  * <ul>
  *   <li>{@code gate}: the scanner phone and the kiosk (role GATE)</li>
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
-@Profile("local")
+@Profile({"local", "cloud"})
 public class SampleAccounts implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(SampleAccounts.class);
