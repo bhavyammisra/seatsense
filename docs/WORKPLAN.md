@@ -92,7 +92,7 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
   - Needs: S0.5.
 - [ ] **S1.2 Student lookup.** `StudentService.findByCardId`, with tests.
   - Needs: S0.5.
-- [ ] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
+- [x] **S1.3 Seat state machine.** Pure Java domain class for FREE, HELD, TAKEN, ON_BREAK, OUT_OF_SERVICE with every legal transition from PROJECT.md Section 11.4. Illegal transitions throw. Unit test every edge.
   - Needs: nothing (can start any time).
 - [ ] **S1.4 Sessions.** `seat_session` entity and service: create a session for a chosen seat, end it on exit. Publishes domain events through Spring's `ApplicationEventPublisher`. Handles the unique-constraint violation from B1.1 by returning 409 with an alternative seat.
   - Needs: S1.2, S1.3, B1.1.
