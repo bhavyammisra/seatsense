@@ -104,3 +104,10 @@ export async function fetchAvailability(): Promise<Availability> {
 }
 
 export type { ApiFloor }
+
+export type Headcount = { inside: number; floors: { id: string; inside: number }[]; onBreak: number }
+
+/** People seated and on break, per floor. Librarian and admin only. */
+export async function fetchHeadcount(): Promise<Headcount> {
+  return getJson<Headcount>('/api/admin/headcount')
+}

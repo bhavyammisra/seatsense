@@ -1,0 +1,241 @@
+.dash {
+  min-height: 100vh;
+}
+
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.dash .brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.dash .brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: var(--accent);
+  flex: none;
+}
+
+.dash .brand-name {
+  font-weight: 600;
+}
+
+.dash .brand-place {
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}
+
+.dash-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.dash-logout {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+}
+
+.dash-main {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-7);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.dash-muted {
+  color: var(--ink-2);
+}
+
+.dash-panel {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.dash-panel h1 {
+  font-size: 1.5rem;
+}
+
+/* Login */
+.dash-login {
+  width: min(380px, 100%);
+  margin: var(--space-6) auto 0;
+}
+
+.dash-login label {
+  display: grid;
+  gap: var(--space-1);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dash-login input {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.dash-error {
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Numbers at the top */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.dash-stat {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.dash-stat-label {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.dash-stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-stat[data-tone='ok'] .dash-stat-value {
+  color: var(--ok);
+}
+
+.dash-stat[data-tone='danger'] .dash-stat-value {
+  color: var(--danger);
+}
+
+.dash-stat-hint {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+/* Floor table */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-table th,
+.dash-table td {
+  padding: var(--space-3) var(--space-2);
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.dash-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+
+.dash-table tr[aria-current='true'] th,
+.dash-table tr[aria-current='true'] td {
+  background: var(--accent-soft);
+}
+
+.dash-table td[data-full] {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.dash-floor-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dash-bar {
+  display: inline-block;
+  width: 80px;
+  height: 6px;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+  border-radius: 3px;
+  background: var(--surface-sunk);
+  overflow: hidden;
+}
+
+.dash-bar span {
+  display: block;
+  height: 100%;
+  background: var(--seat-taken-ink);
+}
+
+.dash-share {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.dash-map {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 720px) {
+  .dash-header {
+    padding: var(--space-3) var(--space-4);
+  }
+  .dash .brand-place {
+    display: none;
+  }
+  .dash-main {
+    padding: var(--space-5) var(--space-4) var(--space-6);
+  }
+  .dash-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dash-bar {
+    display: none;
+  }
+  .dash-table th,
+  .dash-table td {
+    padding: var(--space-2) var(--space-1);
+    font-size: 0.875rem;
+  }
+  .dash-map {
+    padding: var(--space-4) var(--space-3);
+  }
+}
