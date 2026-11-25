@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchMe, login, logout, type Me, type Role } from '../api/authApi'
 import { reconnectLive } from '../live/live'
 import './staff-login.css'
@@ -63,21 +64,21 @@ export default function StaffLogin({ roles, title, hint, children }: Props) {
   }
   if (me) {
     return (
-      <div className="staff-login">
+      <LoginFrame title={title}>
         <section className="staff-login-panel">
-          <h1>{title}</h1>
+          <p className="eyebrow">Wrong account</p>
           <p className="staff-login-muted">This screen needs the {roles.join(' or ').toLowerCase()} account.</p>
           <button type="button" className="btn btn-ghost" onClick={signOut}>
             Log out
           </button>
         </section>
-      </div>
+      </LoginFrame>
     )
   }
   return (
-    <div className="staff-login">
+    <LoginFrame title={title}>
       <form className="staff-login-panel" onSubmit={submit} noValidate>
-        <h1>{title}</h1>
+        <p className="eyebrow">Log in</p>
         <p className="staff-login-muted">{hint}</p>
         <label>
           Username
@@ -112,6 +113,23 @@ export default function StaffLogin({ roles, title, hint, children }: Props) {
           {busy ? 'Logging in…' : 'Log in'}
         </button>
       </form>
+    </LoginFrame>
+  )
+}
+
+/** Split screen: the page's name large on the wine band, the form on cream. */
+export function LoginFrame({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="staff-login">
+      <aside className="staff-login-band">
+        <Link to="/" className="staff-login-wordmark">
+          SeatSense
+          <span>Nava Nalanda Library</span>
+        </Link>
+        <h1>{title}.</h1>
+        <p className="staff-login-band-foot">Sample accounts only. Not an official Thapar service.</p>
+      </aside>
+      <main className="staff-login-side">{children}</main>
     </div>
   )
 }

@@ -147,8 +147,13 @@ function Kiosk() {
 function Idle({ availability }: { availability: Availability | null }) {
   return (
     <section className="kiosk-idle">
-      <h1>Scan your ID card at the scanner</h1>
-      <p className="muted">
+      <p className="eyebrow">Welcome to Nava Nalanda</p>
+      <h1>
+        Scan your
+        <br />
+        ID card.
+      </h1>
+      <p className="kiosk-idle-count">
         {availability
           ? availability.full
             ? 'Every seat is taken right now. Seats free up through the day.'
@@ -265,7 +270,8 @@ function Picker({
         setSelected([])
         if (e instanceof ApiError && e.error === 'SEAT_TAKEN') {
           const alternative = (e.details.alternative as { code?: string } | null)?.code
-          setNotice(alternative ? `That seat was just taken. ${alternative} is free nearby.` : 'Every seat is taken right now.')
+          const reason = e.details.held ? 'That seat is held for a student on the waitlist.' : 'That seat was just taken.'
+          setNotice(alternative ? `${reason} ${alternative} is free nearby.` : 'Every seat is taken right now.')
         } else if (e instanceof ApiError && e.error === 'GROUP_NOT_AVAILABLE') {
           setNotice(`No ${groupSize} free seats together right now. Try another floor or fewer seats.`)
         } else if (e instanceof ApiError && e.error === 'ALREADY_INSIDE') {

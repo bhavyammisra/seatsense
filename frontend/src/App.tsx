@@ -6,7 +6,7 @@ import DisplayPage from './display/DisplayPage'
 import PortalPage from './portal/PortalPage'
 import DashboardPage from './dashboard/DashboardPage'
 import CardsPage from './cards/CardsPage'
-import { PrivacyPage, TermsPage } from './legal/LegalPages'
+import { PrivacyPage, TermsPage } from './legal/LegalPage'
 
 // Route map (docs/PROJECT.md Section 6):
 //   /           public availability site   (Bhavyam, B1.4)
@@ -16,7 +16,8 @@ import { PrivacyPage, TermsPage } from './legal/LegalPages'
 //   /portal     student portal             (Bhavyam, B2.3)
 //   /dashboard  librarian dashboard        (Bhavyam, B1.6)
 //   /cards      printable SAMPLE ID cards for the demo (X3.1)
-//   /privacy, /terms  privacy policy and terms of use
+//   /privacy    privacy policy
+//   /terms      terms of use
 export default function App() {
   return (
     <Routes>

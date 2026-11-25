@@ -1,48 +1,107 @@
+/* Split-screen login: title on the wine band, form on cream. */
 .staff-login {
   min-height: 100vh;
   display: grid;
-  place-items: start center;
-  padding: var(--space-7) var(--space-4);
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+}
+
+.staff-login-band {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-6) clamp(var(--space-5), 5vw, var(--space-8));
+  background: var(--wine);
+  color: var(--cream);
+}
+
+.staff-login-wordmark {
+  display: grid;
+  width: fit-content;
+  color: var(--cream);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.staff-login-wordmark span {
+  margin-top: 4px;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--cream-2);
+}
+
+.staff-login-band h1 {
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+}
+
+.staff-login-band-foot {
+  font-size: 0.8125rem;
+  color: var(--cream-2);
+}
+
+.staff-login-side {
+  display: grid;
+  place-items: center;
+  padding: var(--space-7) var(--space-5);
 }
 
 .staff-login-panel {
-  width: min(380px, 100%);
+  width: min(360px, 100%);
   display: grid;
   gap: var(--space-4);
-  padding: var(--space-5);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-}
-
-.staff-login-panel h1 {
-  font-size: 1.5rem;
 }
 
 .staff-login-panel label {
   display: grid;
-  gap: var(--space-1);
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
 }
 
 .staff-login-panel input {
-  min-height: 44px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  background: var(--surface);
+  min-height: 48px;
+  padding: 0 var(--space-1);
+  border: 0;
+  border-bottom: 1px solid var(--ink-2);
+  border-radius: 0;
+  background: transparent;
   color: var(--ink);
   font: inherit;
+  font-size: 1.0625rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.staff-login-panel input:focus {
+  outline: none;
+  border-bottom: 2px solid var(--accent);
+}
+
+.staff-login-panel .btn {
+  margin-top: var(--space-3);
 }
 
 .staff-login-muted,
 .staff-login-wait {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.4;
   color: var(--ink-2);
 }
 
 .staff-login-wait {
-  padding: var(--space-6);
+  padding: var(--space-7);
   text-align: center;
 }
 
@@ -50,4 +109,21 @@
   color: var(--danger);
   font-size: 0.875rem;
   font-weight: 500;
+}
+
+@media (max-width: 760px) {
+  .staff-login {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+  .staff-login-band {
+    padding: var(--space-5) var(--space-4) var(--space-6);
+  }
+  .staff-login-band-foot {
+    display: none;
+  }
+  .staff-login-side {
+    place-items: start center;
+    padding: var(--space-6) var(--space-4);
+  }
 }

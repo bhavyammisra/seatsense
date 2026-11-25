@@ -36,7 +36,7 @@ Every error response has this shape:
 | 403 | `FORBIDDEN` | Wrong role. |
 | 404 | `NOT_FOUND` | Unknown seat, floor, card or session. |
 | 404 | `UNKNOWN_CARD` | The scanned card is not in the student table. |
-| 409 | `SEAT_TAKEN` | Another session holds the seat. `details.alternative` is a suggested seat (Seat object) or null. |
+| 409 | `SEAT_TAKEN` | Another session holds the seat, or it is held for a student on the waitlist. `details.alternative` is a suggested seat (Seat object) or null; `details.held` is true when the seat is held for the waitlist. |
 | 409 | `ALREADY_INSIDE` | The student already has an open session. |
 | 409 | `GROUP_NOT_AVAILABLE` | No adjacent block of free seats for the group. |
 | 409 | `NO_BREAKS_LEFT` | Daily break limit reached. |
@@ -254,7 +254,7 @@ Response `200`:
 ```json
 { "status": "OFFERED", "position": 1, "offeredSeat": "3F-H2", "offerExpiresAt": "2026-11-25T18:55:00+05:30" }
 ```
-`status` is `NONE` (not on the waitlist), `WAITING`, `OFFERED` or `ACCEPTED`. A place that ended (`EXPIRED`, `CANCELLED`, or `DONE` once the student sits down) reads as `NONE`. `position` is set only while `WAITING`.
+`status` is `NONE` (not on the waitlist), `WAITING`, `OFFERED` or `ACCEPTED`. A place that ended (`EXPIRED`, `CANCELLED`, or `DONE` once the student sits down) reads as `NONE`. `position` is set only while `WAITING`: 1 means next in line. It counts only students who joined earlier and could get the same seats (those wanting the same floor or any floor; for "any floor", everyone who joined earlier).
 
 ### `DELETE /api/waitlist` (B, B2.2)
 Leave the waitlist. Response `204`.
