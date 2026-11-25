@@ -2,6 +2,8 @@ package com.seatsense;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.seatsense.common.TimeProvider;
+import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -23,6 +25,14 @@ class SeatsenseApplicationTests extends PostgresIntegrationTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).contains("\"status\":\"UP\"");
+    }
+
+    @Autowired
+    private TimeProvider time;
+
+    @Test
+    void clockUsesLibraryTimeZone() {
+        assertThat(time.clock().getZone()).isEqualTo(ZoneId.of("Asia/Kolkata"));
     }
 
     @Test
