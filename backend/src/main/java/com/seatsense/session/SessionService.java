@@ -439,8 +439,9 @@ public class SessionService implements SeatStateSource {
             .orElse(SeatState.FREE);
     }
 
+    /** Loads a session with its row locked, so two exits, breaks or returns of one session run one after the other. */
     private SeatSession find(Long sessionId) {
-        return sessions.findById(sessionId).orElseThrow(() -> new SessionException.NotFound("session " + sessionId));
+        return sessions.findByIdForUpdate(sessionId).orElseThrow(() -> new SessionException.NotFound("session " + sessionId));
     }
 
     private static SeatState seatStateOf(SeatSession session) {
