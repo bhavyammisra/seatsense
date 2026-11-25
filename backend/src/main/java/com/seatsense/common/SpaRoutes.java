@@ -14,9 +14,9 @@ public class SpaRoutes {
      * The React routes in frontend/src/App.tsx, apart from "/" which Spring serves as index.html already.
      * Keep in step with the mapping below (an annotation cannot read this array).
      */
-    public static final String[] PAGES = {"/kiosk", "/scanner", "/portal", "/dashboard", "/cards"};
+    public static final String[] PAGES = {"/kiosk", "/scanner", "/portal", "/dashboard", "/cards", "/privacy", "/terms"};
 
-    @GetMapping({"/kiosk", "/scanner", "/portal", "/dashboard", "/cards"})
+    @GetMapping({"/kiosk", "/scanner", "/portal", "/dashboard", "/cards", "/privacy", "/terms"})
     public String page() {
         return "forward:/index.html";
     }

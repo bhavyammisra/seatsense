@@ -11,6 +11,7 @@ import type { Floor, SeatState, SeatStates } from '../shared/layout'
 import { useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
 import './public.css'
+import { LegalLinks } from '../legal/LegalPages'
 
 // Public availability site (WORKPLAN B1.4). View only: seats are given out at
 // the entrance gate, so nothing here can be booked. Counts and the seat map
@@ -154,6 +155,7 @@ export default function PublicPage() {
           </>
         )}
       </main>
+      <LegalLinks />
     </div>
   )
 }
