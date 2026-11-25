@@ -201,7 +201,7 @@ Take them in this order unless we agree otherwise.
 | [x] B4.2 "Tell me when Floor N has 5+ free" alerts | [ ] S4.2 Found items: notify last occupant |
 | [x] B4.3 Analytics heatmap, "saw FULL" demand count | [ ] S4.3 Seat report button and staff sweep mode |
 | [x] B4.4 Fire-drill headcount view | [ ] S4.4 Accessible reserved seats |
-| [ ] B4.5 Entrance display mode | [ ] S4.5 Desk QR confirmation |
+| [x] B4.5 Entrance display mode | [ ] S4.5 Desk QR confirmation |
 
 ---
 
