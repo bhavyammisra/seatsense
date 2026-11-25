@@ -6,7 +6,7 @@ Live library seat finder for our Enterprising Web Applications (Java) course pro
 
 You need JDK 21 or newer and a Postgres 16 database. Maven is not needed: the repo has a Maven wrapper.
 
-The steps below use Docker Desktop for Postgres. Without Docker, any local Postgres 16 works (for example Postgres.app on a Mac): create a database and user with the same values as in your `.env`, skip step 2, and carry on.
+The steps below use Docker Desktop for Postgres. Without Docker, any local Postgres 16 works (for example `brew install postgresql@16` and `brew services start postgresql@16` on a Mac): create a database and user with the same values as in your `.env`, skip step 2, and carry on.
 
 1. Create your `.env` from the example and set your own password in it:
    ```
@@ -55,6 +55,7 @@ Docker must be running: database tests start their own throwaway Postgres with T
 | `local` (default) | Running on your machine | Postgres from `docker-compose.yml`, settings from `.env` |
 | `dev` | Demo rehearsal: `local` plus simulator endpoints | Same as `local` |
 | `test` | Automated tests | Testcontainers |
+| `cloud` | The hosted demo (see "Hosted demo"): sample accounts and simulator on, serves the built frontend too | From the host's `DB_*` settings |
 
 ## Run the frontend
 
@@ -77,7 +78,9 @@ Open http://localhost:5173. The dev server sends `/api` and `/ws` to the backend
 
 All students, cards and accounts above are sample data, never real people.
 
-## Demo on phones
+## Demo on phones (local laptop)
+
+The hosted demo needs none of this. Use it only when running everything from one laptop.
 
 The scanner and portal run on phones that open the laptop by its network address (for example `https://192.168.1.5:5173`). Two things are needed:
 
@@ -97,6 +100,25 @@ The scanner and portal run on phones that open the laptop by its network address
    ```
 
 The laptop and phones must be on the same network (a phone hotspot works).
+
+## Hosted demo
+
+The demo runs online on [Render](https://render.com) as one web service plus a Postgres database, both described in `render.yaml`. The `Dockerfile` builds the React app and puts it inside the Spring Boot jar, so the pages, the API and live updates share one https address. Phones can open the scanner and portal with no certificates and no shared Wi-Fi.
+
+To set it up (once):
+
+1. Sign in to Render with GitHub and give it access to this repository.
+2. New, then Blueprint, then pick this repository. Render reads `render.yaml`.
+3. When asked for `SAMPLE_PASSWORD`, enter the password the sample accounts (`gate`, `librarian`, `admin`, `sample.student1` to `5`) should use. Keep it out of the repo.
+4. Apply. The first build takes a few minutes. The address appears at the top of the `seatsense` service, for example `https://seatsense-xxxx.onrender.com`. Open `/kiosk`, `/scanner`, `/portal`, `/dashboard` or `/cards` on it.
+
+Things to know about the free plan:
+
+- The service sleeps after 15 minutes without visits, and the first visit after that takes about a minute. Open the site a few minutes before presenting.
+- The free database expires 30 days after it is created. Create the blueprint close to the presentation date, or move to a paid plan.
+- Only sample data goes here. The simulator is on so the demo script works; reset it from the dashboard after rehearsing.
+
+Every push to `main` redeploys automatically.
 
 ## Demo script
 
