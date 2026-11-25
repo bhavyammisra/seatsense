@@ -169,8 +169,10 @@ Goal: full library → join waitlist → someone leaves → offer arrives → ex
 
 ### Bhavyam
 - [ ] **B3.1 Simulator.** Dev-profile `POST /api/sim/rush` replaying an exam-evening scenario (sample students fill the library floor by floor), and `POST /api/sim/clock` to fast-forward time.
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B3-demo-readiness`). Bhavyam: review the PR instead.
 - [ ] **B3.2 Hosting.** Decide: run locally on one laptop on a hotspot, or deploy. Make sure phones can reach the kiosk and scanner over the demo network (HTTPS is needed for phone camera access if not on localhost).
 - [ ] **B3.3 Dashboard polish.** Seat out-of-service toggle, headcount by floor.
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B3-demo-readiness`). Bhavyam: review the PR instead.
 
 ### Shefali
 - [ ] **S3.1 Concurrency demo flow.** Two phones tapping the same seat: clear "taken by someone else, try 3F-09" message on the losing phone.

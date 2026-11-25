@@ -42,7 +42,7 @@ public class SecurityConfig {
                 // /ws: the socket handshake; who may subscribe to what is checked per message (WebSocketSecurityConfig)
                 .requestMatchers("/api/public/**", "/api/auth/login", "/actuator/health", "/error", "/ws").permitAll()
                 .requestMatchers("/api/gate/**", "/api/sessions/**").hasRole(Role.GATE.name())
-                .requestMatchers("/api/admin/**").hasRole(Role.LIBRARIAN.name())
+                .requestMatchers("/api/admin/**", "/api/sim/**").hasRole(Role.LIBRARIAN.name())
                 .requestMatchers("/api/waitlist/**", "/api/seats/*/report").hasRole(Role.STUDENT.name())
                 .anyRequest().authenticated())
             .csrf(csrf -> csrf
