@@ -109,8 +109,9 @@ Goal: scan in on a phone, the seat turns taken on the kiosk and public site in u
 ### Bhavyam
 - [x] **B1.1 V2 migration: sessions and scans.** `seat_session` and `scan_event` tables, including the two partial unique indexes from PROJECT.md Section 9 (one active session per seat, one per student).
   - Needs: S0.5.
-- [ ] **B1.2 Concurrency proof.** Testcontainers test: 200 threads take the same seat at once, exactly one ACTIVE session exists afterwards. Same for one student taking two seats. Runs in CI.
+- [x] **B1.2 Concurrency proof.** Testcontainers test: 200 threads take the same seat at once, exactly one ACTIVE session exists afterwards. Same for one student taking two seats. Runs in CI.
   - Needs: B1.1, S1.4.
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (`session/ConcurrencyProofTest`). Bhavyam: review the PR instead of starting this one.
 - [x] **B1.3 Live module.** STOMP WebSocket config. Listen to domain events and broadcast `/topic/seats/{floorId}` and `/topic/availability` as specified in `docs/api.md`. Frontend helper hook `useLive()` in `frontend/src/shared/live` (shared file: small PR, Shefali approves).
   - Needs: B0.2, S0.2.
 - [x] **B1.4 Public availability.** `GET /api/public/availability` (free and total per floor, FULL flag). Public site page `/`: per-floor counts, FULL state, SeatMap per floor, live updates.
