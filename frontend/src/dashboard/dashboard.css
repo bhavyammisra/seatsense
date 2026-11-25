@@ -266,3 +266,179 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+
+/* B4.4 fire drill */
+.dash-drill-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.dash-drill-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.dash-drill-summary {
+  margin-top: var(--space-3);
+}
+
+.dash-drill-floor {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.dash-drill-floor h4 {
+  margin: var(--space-2) 0 0;
+  font-size: 0.875rem;
+  color: var(--warn);
+}
+
+.dash-drill-check {
+  width: 2.5rem;
+}
+
+.dash-drill-check input {
+  width: 20px;
+  height: 20px;
+}
+
+.dash-sample-tag {
+  margin-left: var(--space-2);
+  padding: 0 var(--space-1);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--warn);
+}
+
+@media print {
+  body.printing-drill .dash-header,
+  body.printing-drill .dash-main > :not(.dash-drill),
+  body.printing-drill .dash-drill-actions {
+    display: none;
+  }
+  body.printing-drill .dash-drill {
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+/* B4.3 analytics */
+.dash-analytics {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.dash-analytics-block {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  min-width: 0;
+}
+
+.dash-analytics-row {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--space-5);
+}
+
+.dash-heat-scroll {
+  overflow-x: auto;
+}
+
+.dash-heat {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-heat th {
+  font-weight: 500;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+  white-space: nowrap;
+}
+
+.dash-heat thead th {
+  text-align: center;
+}
+
+.dash-heat tbody th {
+  text-align: left;
+}
+
+.dash-heat td {
+  min-width: 34px;
+  height: 28px;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+}
+
+.dash-heat td[data-strong] {
+  color: var(--accent-ink);
+}
+
+.dash-heat .dash-heat-empty,
+.dash-heat-empty-key {
+  border: 1px dashed var(--line-strong);
+}
+
+.dash-heat-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.dash-heat-ramp {
+  width: 120px;
+  height: 10px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(to right, var(--surface), var(--accent));
+  border: 1px solid var(--line);
+}
+
+.dash-heat-empty-key {
+  width: 14px;
+  height: 10px;
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-3);
+}
+
+.dash-big-number {
+  font-size: 2.25rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.dash-days {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-1);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.dash-days li {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 720px) {
+  .dash-analytics-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

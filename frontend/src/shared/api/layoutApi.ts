@@ -1,4 +1,5 @@
 import type { Fixture, Floor, Section, Seat, SeatState, SeatStates, Zone } from '../layout'
+import { ensureCsrf } from './authApi'
 
 // Client for the public layout and availability API (docs/api.md, "Public").
 // Turns the API's floors and seats into the same Floor shape the seat map already draws.
@@ -118,4 +119,13 @@ export type Headcount = { inside: number; floors: { id: string; inside: number }
 /** People seated and on break, per floor. Librarian and admin only. */
 export async function fetchHeadcount(): Promise<Headcount> {
   return getJson<Headcount>('/api/admin/headcount')
+}
+
+/** Tells the server the public site is showing FULL (B4.3). Counted only if the library really is full. */
+export async function reportSawFull(): Promise<void> {
+  await fetch('/api/public/saw-full', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'X-XSRF-TOKEN': await ensureCsrf() },
+  })
 }

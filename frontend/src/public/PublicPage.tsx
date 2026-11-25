@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ApiUnavailable,
   fetchAvailability,
   fetchFloors,
   fetchFloorWithSeats,
+  reportSawFull,
   type ApiFloor,
   type Availability,
 } from '../shared/api/layoutApi'
@@ -33,6 +34,15 @@ export default function PublicPage() {
   const [map, setMap] = useState<{ floor: Floor; states: SeatStates } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const predictions = usePredictions()
+
+  // B4.3: count this visit once if it shows FULL, so staff see demand the gate never sees.
+  const reportedFull = useRef(false)
+  useEffect(() => {
+    if (availability?.full && !reportedFull.current) {
+      reportedFull.current = true
+      reportSawFull().catch(() => undefined)
+    }
+  }, [availability?.full])
 
   useEffect(() => {
     let cancelled = false

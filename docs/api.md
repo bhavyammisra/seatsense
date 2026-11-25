@@ -145,6 +145,10 @@ Response `200`:
 }
 ```
 
+### `POST /api/public/saw-full` (B, stretch B4.3)
+
+No body. The public site calls this once per visit while it shows FULL. The server stores a row (time only) only if the library really is full at that moment. Response `200`: `{ "counted": true }` or `{ "counted": false }`.
+
 ### `GET /api/public/predictions` (B, stretch B4.1)
 
 Response `200`:
@@ -285,12 +289,27 @@ Response `200`:
 
 Request: `{ "outOfService": true, "reason": "Broken chair" }`. Response `200`: the updated `Seat`.
 
-### `GET /api/admin/analytics/heatmap?from=2026-11-01&to=2026-11-25` (B, stretch B4.3)
+### `GET /api/admin/analytics` (B, stretch B4.3)
 
 Response `200`:
 ```json
-{ "slots": [ { "weekday": "MONDAY", "time": "18:00", "floor": "2F", "averageTaken": 0.92 } ] }
+{ "heatmap": [ { "weekday": 1, "hour": 18, "occupancy": 0.92 } ],
+  "daysOfData": 28, "sample": true,
+  "topSeats": [ { "code": "3F-C1", "sessions": 14, "minutes": 1260 } ], "seatsSample": true,
+  "sawFull": [ { "date": "2026-11-20", "count": 0 } ], "sawFullTotal": 3 }
 ```
+`heatmap`: the share of seats not free (all floors together) for each weekday (`1` = Monday) and hour over the last 4 weeks, from `occupancy_snapshot`. Hours with no rows are left out. `sample` is true when any of it is simulator SAMPLE data. `topSeats`: the 10 seats taken most often in the last 30 days, with the minutes used. `seatsSample` is true when any of those sessions belongs to a SAMPLE student. `sawFull`: one entry per day for the last 7 days (oldest first), counting public-site visits that showed FULL.
+
+### `GET /api/admin/fire-drill` (B, stretch B4.4)
+
+Response `200`:
+```json
+{ "at": "2026-11-25T18:40:00+05:30", "inside": 37, "onBreak": 3,
+  "floors": [ { "id": "GF", "name": "Ground floor",
+    "inside":  [ { "name": "Aarav S.", "cardId": "SAMPLE0001", "sample": true, "seat": "GF-A1", "since": "...", "breakUntil": null } ],
+    "onBreak": [ { "name": "Ananya K.", "cardId": "SAMPLE0002", "sample": true, "seat": "GF-A2", "since": "...", "breakUntil": "..." } ] } ] }
+```
+Everyone with an open session, by floor. Students on a break scanned out at the gate, so they are listed apart. Names: staff only.
 
 ### `POST /api/admin/found-items` (S, stretch S4.2)
 

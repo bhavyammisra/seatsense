@@ -14,6 +14,8 @@ import type { Floor, Seat, SeatState, SeatStates } from '../shared/layout'
 import { reconnectLive, useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
 import './dashboard.css'
+import AnalyticsPanel from './AnalyticsPanel'
+import FireDrillPanel from './FireDrillPanel'
 
 // Librarian dashboard (WORKPLAN B1.6): who is in the library right now, floor
 // by floor, with a live seat map. Library staff only (LIBRARIAN or ADMIN).
@@ -152,6 +154,7 @@ function Dashboard() {
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [demo, setDemo] = useState(false)
   const [demoBusy, setDemoBusy] = useState(false)
+  const [analyticsKey, setAnalyticsKey] = useState(0)
 
   useEffect(() => {
     simulatorAvailable().then(setDemo)
@@ -175,6 +178,7 @@ function Dashboard() {
     try {
       await action()
       setActionMessage(done)
+      setAnalyticsKey((k) => k + 1)
     } catch {
       setActionMessage('The demo action did not go through.')
     } finally {
@@ -289,6 +293,8 @@ function Dashboard() {
         </table>
       </section>
 
+      <FireDrillPanel refreshKey={availability.updatedAt} />
+
       {demo && (
         <section className="dash-panel dash-demo" aria-label="Demo controls">
           <h2>Demo controls</h2>
@@ -376,6 +382,8 @@ function Dashboard() {
           <p className="dash-muted">Loading the floor…</p>
         )}
       </section>
+
+      <AnalyticsPanel refreshKey={analyticsKey} />
     </>
   )
 }
