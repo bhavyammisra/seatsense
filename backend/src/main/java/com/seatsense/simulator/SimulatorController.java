@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Demo-only endpoints (docs/api.md, "Dev only"). They exist only with the
- * {@code dev} Spring profile, and need a LIBRARIAN or ADMIN login.
+ * {@code dev} or {@code cloud} (hosted demo, sample data only) Spring profile, and need a LIBRARIAN or ADMIN login.
  */
 @RestController
-@Profile("dev")
+@Profile({"dev", "cloud"})
 public class SimulatorController {
 
     public record RushRequest(String scenario) {
