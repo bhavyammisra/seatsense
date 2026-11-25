@@ -148,18 +148,18 @@ Goal: full library → join waitlist → someone leaves → offer arrives → ex
   - Needs: S1.4.
 
 ### Bhavyam
-- [ ] **B2.1 V6 migration: waitlist and holds.** `waitlist_entry`, `seat_hold` tables. Held seats must show as HELD in seat state (coordinate with Shefali: the session module reads active holds).
+- [x] **B2.1 V6 migration: waitlist and holds.** `waitlist_entry`, `seat_hold` tables. Held seats must show as HELD in seat state (coordinate with Shefali: the session module reads active holds).
   - Needs: B1.1.
-  - Taken over by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
-- [ ] **B2.2 Waitlist service.** FIFO join, leave, position. On `SeatFreed`, offer to the head of the queue (respecting floor preference), create a 15-minute hold, notify via `/user/queue/notifications`. Scheduled job expires offers and moves to the next person. Tests with the fake clock.
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
+- [x] **B2.2 Waitlist service.** FIFO join, leave, position. On `SeatFreed`, offer to the head of the queue (respecting floor preference), create a 15-minute hold, notify via `/user/queue/notifications`. Scheduled job expires offers and moves to the next person. Tests with the fake clock.
   - Needs: B2.1, B1.3.
-  - Taken over by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
-- [ ] **B2.3 Student portal.** `/portal`: login, join or leave waitlist, live position, offer notification with countdown.
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
+- [x] **B2.3 Student portal.** `/portal`: login, join or leave waitlist, live position, offer notification with countdown.
   - Needs: B2.2, B1.5.
-  - Taken over by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
-- [ ] **B2.4 Public site: FULL flow.** When full, show "Join waitlist" (links to portal login) and "Tell me when free" (stretch hook).
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
+- [x] **B2.4 Public site: FULL flow.** When full, show "Join waitlist" (links to portal login) and "Tell me when free" (stretch hook).
   - Needs: B2.3.
-  - Taken over by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
+  - Done by Shefali on 2026-11-26 while Bhavyam was offline (branch `feat/B2-waitlist`). Bhavyam: review the PR instead.
 
 **Phase 2 dates:** ___ to ___
 
