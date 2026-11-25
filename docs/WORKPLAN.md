@@ -139,6 +139,7 @@ Goal: full library → join waitlist → someone leaves → offer arrives → ex
   - Needs: S2.1, S1.8.
 - [ ] **S2.3 Sit together.** Group search from Section 11.2 (same row, same table, BFS fallback). All seats allocated in one transaction, all or nothing. Kiosk flow for 2 to 4 friends scanning together.
   - Needs: S1.4 (algorithm can start any time).
+  - Progress: search algorithm done (`allocation/GroupSeatFinder`). Still to do once S1.4 exists: the all-or-nothing allocation in the session service and the kiosk flow. Tick this box then.
 - [ ] **S2.4 Breaks.** Exit choice LEAVE or BREAK, `POST /api/sessions/{id}/return`, break limit per day, scheduled expiry of breaks using the injectable clock, `BreakEnded` event.
   - Needs: S1.5.
 - [ ] **S2.5 Closing-time reset.** Scheduled job ends all sessions at the floor's close time.
