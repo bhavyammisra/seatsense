@@ -17,9 +17,10 @@ function liveClient(): Client {
     client = new Client({
       brokerURL: `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`,
       reconnectDelay: 3000,
-      // The server checks the CSRF token on CONNECT, like on every POST. Any API response sets the cookie.
+      // The server checks the CSRF token on CONNECT, like on every POST. Any API response sets the cookie;
+      // a public one, so logged-out visitors do not get a 401 in the console.
       beforeConnect: async (c) => {
-        if (!csrfToken()) await fetch('/api/auth/me', { credentials: 'same-origin' })
+        if (!csrfToken()) await fetch('/api/public/floors', { credentials: 'same-origin' })
         c.connectHeaders = { 'X-XSRF-TOKEN': csrfToken() }
       },
       onConnect: () => resubscribers.forEach((subscribe) => subscribe()),
