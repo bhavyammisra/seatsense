@@ -86,7 +86,7 @@ render.yaml  The hosted demo: one web service and a Postgres database
 
 ## Team
 
-Built by **Shefali** and **Bhavyam Misra**. [docs/WORKPLAN.md](docs/WORKPLAN.md) records who owned which module and every task, phase by phase. [docs/PROJECT.md](docs/PROJECT.md) has the full design: the problem, the decisions behind it, the data model and the algorithms.
+Built by **Shefali**, **Bhavyam Misra** and **Tushita Jindal**. [docs/WORKPLAN.md](docs/WORKPLAN.md) records who owned which module and every task, phase by phase. [docs/PROJECT.md](docs/PROJECT.md) has the full design: the problem, the decisions behind it, the data model and the algorithms.
 
 ## Run the backend
 
