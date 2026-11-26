@@ -45,6 +45,12 @@ public class SimulatorController {
         return Map.of("advancedMinutes", body.advanceMinutes());
     }
 
+    /** Fills the last 4 weeks with SAMPLE occupancy snapshots, so predictions and the heatmap have data. */
+    @PostMapping("/api/sim/history")
+    public Map<String, Object> history() {
+        return Map.of("snapshots", simulator.sampleHistory(System.nanoTime()), "sample", true);
+    }
+
     @PostMapping("/api/sim/reset")
     public Map<String, Object> reset() {
         return Map.of("sessionsEnded", simulator.reset());

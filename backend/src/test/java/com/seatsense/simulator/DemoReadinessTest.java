@@ -46,7 +46,14 @@ class DemoReadinessTest extends PostgresIntegrationTest {
     @AfterEach
     void cleanUp() {
         simulator.reset();
-        jdbc.update("update seat set out_of_service = false where code in ('GF-E1', 'GF-E2')");
+        // Leave the database as V1 seeded it: other tests (V1LayoutMigrationTest) count seats and students.
+        // Toggling out of service goes through JPA, which bumps the seat's @Version.
+        jdbc.update("update seat set out_of_service = false, version = 0 where code in ('GF-E1', 'GF-E2')");
+        jdbc.update("delete from seat_session where student_id in (select id from student where card_id like 'SIM-%')");
+        jdbc.update("delete from scan_event where student_id in (select id from student where card_id like 'SIM-%')");
+        jdbc.update("delete from seat_hold where student_id in (select id from student where card_id like 'SIM-%')");
+        jdbc.update("delete from waitlist_entry where student_id in (select id from student where card_id like 'SIM-%')");
+        jdbc.update("delete from student where card_id like 'SIM-%'");
     }
 
     private long student(int n) {

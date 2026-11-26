@@ -147,8 +147,13 @@ function Kiosk() {
 function Idle({ availability }: { availability: Availability | null }) {
   return (
     <section className="kiosk-idle">
-      <h1>Scan your ID card at the scanner</h1>
-      <p className="muted">
+      <p className="eyebrow">Welcome to Nava Nalanda</p>
+      <h1>
+        Scan your
+        <br />
+        ID card.
+      </h1>
+      <p className="kiosk-idle-count">
         {availability
           ? availability.full
             ? 'Every seat is taken right now. Seats free up through the day.'

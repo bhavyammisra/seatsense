@@ -145,13 +145,18 @@ Response `200`:
 }
 ```
 
-### `GET /api/public/prediction` (B, stretch B4.1)
+### `POST /api/public/saw-full` (B, stretch B4.3)
+
+No body. The public site calls this once per visit while it shows FULL. The server stores a row (time only) only if the library really is full at that moment. Response `200`: `{ "counted": true }` or `{ "counted": false }`.
+
+### `GET /api/public/predictions` (B, stretch B4.1)
 
 Response `200`:
 ```json
-{ "usuallyFreesAround": "19:15", "basedOnWeeks": 4 }
+{ "minFree": 5,
+  "floors": [ { "floorId": "3F", "freesUpAround": "19:15:00", "weeksOfData": 4, "sample": false } ] }
 ```
-When there is not enough history, both fields are `null`. Never invent a value.
+For today's weekday, each 15-minute slot gets the average number of free seats seen in that slot on the same weekday over the last 4 weeks (from `occupancy_snapshot`, stored every 5 minutes). `freesUpAround` is the first slot later today, before the floor closes, where that average reaches `minFree`. With no history `freesUpAround` is `null` and `weeksOfData` is `0`: never invent a value. `sample` is `true` when any of the history is simulator SAMPLE data, and the screen must then say so.
 
 ---
 
@@ -259,6 +264,12 @@ Accept the current offer. Accepting **restarts the hold at a fresh 15 minutes** 
 
 Response `200`: same body as `GET /api/waitlist/me`, with `status: "ACCEPTED"` and the new `offerExpiresAt`. Error: `NO_OFFER`.
 
+### `GET /api/alerts`, `POST /api/alerts`, `DELETE /api/alerts/{id}` (B, stretch B4.2)
+
+"Tell me when Floor N has 5+ free seats". `POST` body: `{ "floorId": "3F", "minFree": 5 }` (1 to 50). Response `201`: `{ "id": 7, "floorId": "3F", "minFree": 5 }`. Asking again for the same floor changes the number. `GET` lists the student's live alerts. `DELETE` stops one (`204`).
+Errors: `ALREADY_FREE` (409) if the floor already has that many free seats, `NOT_FOUND` for an unknown floor, `VALIDATION_FAILED` for a number outside 1 to 50.
+The first time the floor has at least `minFree` free seats, the student gets one `FLOOR_FREE` notification and the alert is done.
+
 ### `POST /api/seats/{code}/report` (S, stretch S4.3)
 
 Request: `{ "reportedState": "TAKEN" }` or `{ "reportedState": "FREE" }`. Response `202`.
@@ -278,12 +289,27 @@ Response `200`:
 
 Request: `{ "outOfService": true, "reason": "Broken chair" }`. Response `200`: the updated `Seat`.
 
-### `GET /api/admin/analytics/heatmap?from=2026-11-01&to=2026-11-25` (B, stretch B4.3)
+### `GET /api/admin/analytics` (B, stretch B4.3)
 
 Response `200`:
 ```json
-{ "slots": [ { "weekday": "MONDAY", "time": "18:00", "floor": "2F", "averageTaken": 0.92 } ] }
+{ "heatmap": [ { "weekday": 1, "hour": 18, "occupancy": 0.92 } ],
+  "daysOfData": 28, "sample": true,
+  "topSeats": [ { "code": "3F-C1", "sessions": 14, "minutes": 1260 } ], "seatsSample": true,
+  "sawFull": [ { "date": "2026-11-20", "count": 0 } ], "sawFullTotal": 3 }
 ```
+`heatmap`: the share of seats not free (all floors together) for each weekday (`1` = Monday) and hour over the last 4 weeks, from `occupancy_snapshot`. Hours with no rows are left out. `sample` is true when any of it is simulator SAMPLE data. `topSeats`: the 10 seats taken most often in the last 30 days, with the minutes used. `seatsSample` is true when any of those sessions belongs to a SAMPLE student. `sawFull`: one entry per day for the last 7 days (oldest first), counting public-site visits that showed FULL.
+
+### `GET /api/admin/fire-drill` (B, stretch B4.4)
+
+Response `200`:
+```json
+{ "at": "2026-11-25T18:40:00+05:30", "inside": 37, "onBreak": 3,
+  "floors": [ { "id": "GF", "name": "Ground floor",
+    "inside":  [ { "name": "Aarav S.", "cardId": "SAMPLE0001", "sample": true, "seat": "GF-A1", "since": "...", "breakUntil": null } ],
+    "onBreak": [ { "name": "Ananya K.", "cardId": "SAMPLE0002", "sample": true, "seat": "GF-A2", "since": "...", "breakUntil": "..." } ] } ] }
+```
+Everyone with an open session, by floor. Students on a break scanned out at the gate, so they are listed apart. Names: staff only.
 
 ### `POST /api/admin/found-items` (S, stretch S4.2)
 
@@ -298,6 +324,7 @@ Request: `{ "seat": "3F-C12", "description": "Black phone charger" }`. Response 
 | `POST /api/sim/rush` | `{ "scenario": "EXAM_EVENING" }` | Sample students fill the library floor by floor. |
 | `POST /api/sim/clock` | `{ "advanceMinutes": 30 }` | Moves the server clock forward, so breaks and offers expire on stage. |
 | `POST /api/sim/reset` | none | Ends every session and clears waitlists. |
+| `POST /api/sim/history` | none | Replaces the SAMPLE occupancy history with 4 invented weeks (marked `is_sample`), for predictions and the heatmap. Real snapshots are not touched. |
 
 These endpoints must not exist outside the `dev` profile.
 
@@ -323,6 +350,7 @@ Notification payloads:
 { "type": "BREAK_ENDING", "seat": "2F-C7", "endsAt": "..." }
 { "type": "BREAK_ENDED", "seat": "2F-C7" }
 { "type": "FOUND_ITEM", "seat": "3F-C12", "description": "Black phone charger" }
+{ "type": "FLOOR_FREE", "floor": "3F", "floorName": "Third floor", "free": 6 }
 ```
 
 ---

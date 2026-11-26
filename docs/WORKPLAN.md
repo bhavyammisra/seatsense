@@ -35,7 +35,7 @@ This file splits the build in [docs/PROJECT.md](PROJECT.md) between **Shefali** 
 |---|---|---|
 | Theme | Seat engine, gate flow, the kiosk and seat map | Infrastructure, database guarantees, live updates, waitlist, everything outside the gate |
 | Backend packages | `student`, `layout`, `session`, `gate`, `allocation`, `found` | `common` (clock, errors, config), `auth`, `live`, `waitlist`, `analytics`, `simulator` |
-| Database | Tables for her packages: `student`, `floor`, `zone`, `seat`, `found_item`, `seat_report` | Docker, Flyway setup, Testcontainers, CI, tables for his packages: `seat_session` constraints and concurrency tests, `scan_event`, `waitlist_entry`, `seat_hold`, `occupancy_snapshot`, `app_user` |
+| Database | Tables for her packages: `student`, `floor`, `zone`, `seat`, `found_item`, `seat_report` | Docker, Flyway setup, Testcontainers, CI, tables for his packages: `seat_session` constraints and concurrency tests, `scan_event`, `waitlist_entry`, `seat_hold`, `occupancy_snapshot`, `free_seat_alert`, `full_view`, `app_user` |
 | Frontend | `frontend/src/shared/SeatMap`, `kiosk`, `scanner` | `public`, `portal`, `dashboard` |
 | Viva topics | PriorityQueue best seat, group seating search, seat state machine, break holds | Database concurrency guarantee and the 200-thread test, WebSockets, waitlist with timed holds, scheduled jobs, predictions |
 
@@ -197,11 +197,11 @@ Take them in this order unless we agree otherwise.
 
 | Bhavyam | Shefali |
 |---|---|
-| [ ] B4.1 Occupancy snapshots + predictions ("usually frees up around") | [ ] S4.1 Seat preferences (power, window, zone) feeding best-seat ranking |
-| [ ] B4.2 "Tell me when Floor N has 5+ free" alerts | [ ] S4.2 Found items: notify last occupant |
-| [ ] B4.3 Analytics heatmap, "saw FULL" demand count | [ ] S4.3 Seat report button and staff sweep mode |
-| [ ] B4.4 Fire-drill headcount view | [ ] S4.4 Accessible reserved seats |
-| [ ] B4.5 Entrance display mode | [ ] S4.5 Desk QR confirmation |
+| [x] B4.1 Occupancy snapshots + predictions ("usually frees up around") | [ ] S4.1 Seat preferences (power, window, zone) feeding best-seat ranking |
+| [x] B4.2 "Tell me when Floor N has 5+ free" alerts | [ ] S4.2 Found items: notify last occupant |
+| [x] B4.3 Analytics heatmap, "saw FULL" demand count | [ ] S4.3 Seat report button and staff sweep mode |
+| [x] B4.4 Fire-drill headcount view | [ ] S4.4 Accessible reserved seats |
+| [x] B4.5 Entrance display mode | [ ] S4.5 Desk QR confirmation |
 
 ---
 

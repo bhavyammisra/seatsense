@@ -4,12 +4,18 @@ import com.seatsense.common.TimeProvider;
 import com.seatsense.session.SessionException;
 import com.seatsense.session.SessionService;
 import com.seatsense.waitlist.WaitlistService;
+import java.sql.Timestamp;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -73,6 +79,55 @@ public class SimulatorService {
         }
         log.info("Simulator: exam evening seated {} students ({} skipped)", seated, skipped);
         return new RushResult(seated, skipped);
+    }
+
+    /** Shape of an exam-season day, as a share of each floor's evening peak: (hour, share). Invented, SAMPLE only. */
+    private static final double[][] SAMPLE_DAY = {
+        {8, 0.15}, {10, 0.50}, {12, 0.78}, {13, 0.66}, {14, 0.88}, {17, 1.00}, {19, 0.97}, {20, 0.70}, {21, 0.45}, {22, 0.20},
+    };
+
+    /**
+     * Replaces the SAMPLE occupancy history with 4 invented weeks, one row per floor every 15 minutes
+     * from 08:00 to 22:00 (B4.1). Every row is marked is_sample, and screens say "sample data".
+     * Real snapshots are never touched. Returns how many rows were written.
+     */
+    @Transactional
+    public int sampleHistory(long seed) {
+        Random random = new Random(seed);
+        jdbc.update("delete from occupancy_snapshot where is_sample");
+        Map<String, Integer> totals = new java.util.HashMap<>();
+        jdbc.query("select floor_id, count(*) as n from seat group by floor_id",
+            rs -> { totals.put(rs.getString("floor_id"), rs.getInt("n")); });
+        LocalDate today = LocalDate.now(time.clock());
+        List<Object[]> rows = new ArrayList<>();
+        for (int daysAgo = 28; daysAgo >= 1; daysAgo--) {
+            LocalDate day = today.minusDays(daysAgo);
+            boolean weekend = day.getDayOfWeek() == DayOfWeek.SATURDAY || day.getDayOfWeek() == DayOfWeek.SUNDAY;
+            for (LocalTime t = LocalTime.of(8, 0); !t.isAfter(LocalTime.of(22, 0)); t = t.plusMinutes(15)) {
+                ZonedDateTime at = day.atTime(t).atZone(time.clock().getZone());
+                for (Map.Entry<String, Double> floor : EXAM_EVENING.entrySet()) {
+                    int total = totals.getOrDefault(floor.getKey(), 0);
+                    double share = shareAt(t) * floor.getValue() * (weekend ? 0.6 : 1.0) + (random.nextDouble() - 0.5) * 0.06;
+                    int taken = (int) Math.round(total * Math.max(0, Math.min(1, share)));
+                    rows.add(new Object[] {floor.getKey(), taken, total, Timestamp.from(at.toInstant())});
+                }
+            }
+        }
+        jdbc.batchUpdate("insert into occupancy_snapshot (floor_id, taken, total, taken_at, is_sample) values (?, ?, ?, ?, true)", rows);
+        log.info("Simulator: wrote {} SAMPLE occupancy snapshots", rows.size());
+        return rows.size();
+    }
+
+    private static double shareAt(LocalTime t) {
+        double hour = t.getHour() + t.getMinute() / 60.0;
+        for (int i = 1; i < SAMPLE_DAY.length; i++) {
+            if (hour <= SAMPLE_DAY[i][0]) {
+                double[] a = SAMPLE_DAY[i - 1];
+                double[] b = SAMPLE_DAY[i];
+                return a[1] + (b[1] - a[1]) * (hour - a[0]) / (b[0] - a[0]);
+            }
+        }
+        return SAMPLE_DAY[SAMPLE_DAY.length - 1][1];
     }
 
     /** Moves the library clock forward, so breaks and offers expire on stage. */

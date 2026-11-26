@@ -131,6 +131,17 @@ class WaitlistServiceTest extends PostgresIntegrationTest {
     }
 
     @Test
+    void anOfferThatRanOutCannotBeAcceptedBeforeTheJobClearsIt() {
+        waitlist.join(student(16), null);
+        freeUp("2F-D3", 20);
+
+        time.advance(Duration.ofMinutes(16));
+
+        assertThatThrownBy(() -> waitlist.accept(student(16)))
+            .isInstanceOfSatisfying(WaitlistException.class, e -> assertThat(e.errorCode()).isEqualTo("NO_OFFER"));
+    }
+
+    @Test
     void acceptingRestartsTheHoldOnceOnly() {
         waitlist.join(student(16), null);
         freeUp("2F-D3", 20);

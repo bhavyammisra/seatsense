@@ -77,3 +77,7 @@ spring:
 logging:
   level:
     org.testcontainers: WARN
+seatsense:
+  snapshots:
+    # Tests insert their own snapshots; the 5-minute job would add rows in the middle of a test run.
+    every: PT24H

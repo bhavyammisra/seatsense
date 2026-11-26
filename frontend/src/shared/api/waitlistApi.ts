@@ -50,3 +50,18 @@ export async function leaveWaitlist(): Promise<void> {
 export async function acceptOffer(): Promise<Place> {
   return (await call<Place>('POST', '/api/waitlist/accept')) as Place
 }
+
+/** "Tell me when Floor N has this many free seats" (B4.2). Sent once, then gone. */
+export type FreeSeatAlert = { id: number; floorId: string; minFree: number }
+
+export async function fetchAlerts(): Promise<FreeSeatAlert[]> {
+  return ((await call<FreeSeatAlert[]>('GET', '/api/alerts')) ?? []) as FreeSeatAlert[]
+}
+
+export async function setAlert(floorId: string, minFree: number): Promise<FreeSeatAlert> {
+  return (await call<FreeSeatAlert>('POST', '/api/alerts', { floorId, minFree })) as FreeSeatAlert
+}
+
+export async function cancelAlert(id: number): Promise<void> {
+  await call('DELETE', `/api/alerts/${id}`)
+}

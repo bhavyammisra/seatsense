@@ -131,7 +131,8 @@
   font-weight: 500;
 }
 
-.portal-field select {
+.portal-field select,
+.portal-field input {
   min-height: 44px;
   padding: 0 var(--space-3);
   border: 1px solid var(--line-strong);
@@ -139,4 +140,29 @@
   background: var(--surface);
   color: var(--ink);
   font: inherit;
+}
+
+/* B4.2 alerts */
+.portal-alert-form {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.portal-alerts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.portal-alerts li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }

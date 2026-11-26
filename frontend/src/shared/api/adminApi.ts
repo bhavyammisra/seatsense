@@ -48,3 +48,43 @@ export function simClock(advanceMinutes: number): Promise<unknown> {
 export function simReset(): Promise<{ sessionsEnded: number }> {
   return call('POST', '/api/sim/reset')
 }
+
+/** Replaces the SAMPLE occupancy history with 4 invented weeks, for predictions and the heatmap (B4.1). */
+export function simHistory(): Promise<{ snapshots: number; sample: boolean }> {
+  return call('POST', '/api/sim/history')
+}
+
+/** Librarian analytics (B4.3). occupancy is 0 to 1. weekday: 1 = Monday. */
+export type Analytics = {
+  heatmap: { weekday: number; hour: number; occupancy: number }[]
+  daysOfData: number
+  sample: boolean
+  topSeats: { code: string; sessions: number; minutes: number }[]
+  seatsSample: boolean
+  sawFull: { date: string; count: number }[]
+  sawFullTotal: number
+}
+
+export function fetchAnalytics(): Promise<Analytics> {
+  return call('GET', '/api/admin/analytics')
+}
+
+/** Fire-drill list (B4.4): everyone inside or on a break, by floor. Has names: staff only. */
+export type DrillPerson = {
+  name: string
+  cardId: string
+  sample: boolean
+  seat: string
+  since: string
+  breakUntil: string | null
+}
+export type FireDrill = {
+  at: string
+  inside: number
+  onBreak: number
+  floors: { id: string; name: string; inside: DrillPerson[]; onBreak: DrillPerson[] }[]
+}
+
+export function fetchFireDrill(): Promise<FireDrill> {
+  return call('GET', '/api/admin/fire-drill')
+}

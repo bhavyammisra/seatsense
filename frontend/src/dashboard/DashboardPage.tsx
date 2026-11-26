@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { fetchMe, login, logout, type Me } from '../shared/api/authApi'
-import { setOutOfService, simClock, simReset, simRush, simulatorAvailable } from '../shared/api/adminApi'
+import { setOutOfService, simClock, simHistory, simReset, simRush, simulatorAvailable } from '../shared/api/adminApi'
 import {
   fetchAvailability,
   fetchFloors,
@@ -13,7 +13,11 @@ import {
 import type { Floor, Seat, SeatState, SeatStates } from '../shared/layout'
 import { reconnectLive, useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
+import { LoginFrame } from '../shared/auth/StaffLogin'
+import '../shared/auth/staff-login.css'
 import './dashboard.css'
+import AnalyticsPanel from './AnalyticsPanel'
+import FireDrillPanel from './FireDrillPanel'
 
 // Librarian dashboard (WORKPLAN B1.6): who is in the library right now, floor
 // by floor, with a live seat map. Library staff only (LIBRARIAN or ADMIN).
@@ -37,6 +41,14 @@ export default function DashboardPage() {
     setMe(null)
   }
 
+  if (me === null) {
+    return (
+      <LoginFrame title="Library staff">
+        <LoginForm onLoggedIn={setMe} />
+      </LoginFrame>
+    )
+  }
+
   return (
     <div className="dash">
       <header className="dash-header">
@@ -57,8 +69,6 @@ export default function DashboardPage() {
       <main className="dash-main">
         {me === undefined ? (
           <p className="dash-muted">Checking your login…</p>
-        ) : me === null ? (
-          <LoginForm onLoggedIn={setMe} />
         ) : !STAFF.includes(me.role) ? (
           <section className="dash-panel">
             <h1>This account can't open the dashboard</h1>
@@ -102,9 +112,9 @@ function LoginForm({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
   }
 
   return (
-    <form className="dash-panel dash-login" onSubmit={submit} noValidate>
-      <h1>Log in</h1>
-      <p className="dash-muted">For library staff.</p>
+    <form className="staff-login-panel" onSubmit={submit} noValidate>
+      <p className="eyebrow">Log in</p>
+      <p className="staff-login-muted">For library staff: the dashboard shows who is in, floor by floor.</p>
       <label>
         Username
         <input
@@ -130,7 +140,7 @@ function LoginForm({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
         />
       </label>
       {error && (
-        <p className="dash-error" role="alert">
+        <p className="staff-login-error" role="alert">
           {error}
         </p>
       )}
@@ -152,6 +162,7 @@ function Dashboard() {
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [demo, setDemo] = useState(false)
   const [demoBusy, setDemoBusy] = useState(false)
+  const [analyticsKey, setAnalyticsKey] = useState(0)
 
   useEffect(() => {
     simulatorAvailable().then(setDemo)
@@ -175,6 +186,7 @@ function Dashboard() {
     try {
       await action()
       setActionMessage(done)
+      setAnalyticsKey((k) => k + 1)
     } catch {
       setActionMessage('The demo action did not go through.')
     } finally {
@@ -289,6 +301,8 @@ function Dashboard() {
         </table>
       </section>
 
+      <FireDrillPanel refreshKey={availability.updatedAt} />
+
       {demo && (
         <section className="dash-panel dash-demo" aria-label="Demo controls">
           <h2>Demo controls</h2>
@@ -320,6 +334,16 @@ function Dashboard() {
               onClick={() => runDemo(simReset, 'Everyone has left and the waitlist is empty.')}
             >
               Reset
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              disabled={demoBusy}
+              onClick={() =>
+                runDemo(simHistory, '4 weeks of sample history written. Predictions and the heatmap now use it.')
+              }
+            >
+              Sample history
             </button>
           </div>
         </section>
@@ -366,6 +390,8 @@ function Dashboard() {
           <p className="dash-muted">Loading the floor…</p>
         )}
       </section>
+
+      <AnalyticsPanel refreshKey={analyticsKey} />
     </>
   )
 }

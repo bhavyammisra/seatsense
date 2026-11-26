@@ -1,0 +1,81 @@
+/*
+  One top bar for every working screen (kiosk, scanner, portal, dashboard):
+  the wine band from the public site, with the serif wordmark.
+  `body` raises specificity above each page's own header rules.
+*/
+body :is(.kiosk-header, .dash-header, .portal-header, .scanner-header) {
+  background: var(--wine);
+  color: var(--cream);
+  border-bottom: 0;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+
+body :is(.kiosk-header, .dash-header, .portal-header) .brand {
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+body :is(.kiosk-header, .dash-header, .portal-header) .brand-mark {
+  display: none;
+}
+
+body :is(.kiosk-header, .dash-header, .portal-header) .brand-name,
+body .scanner-brand {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--cream);
+}
+
+body :is(.kiosk-header, .dash-header, .portal-header) .brand-place,
+body .scanner-gate {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--cream-2);
+}
+
+body :is(.kiosk-header, .dash-header, .portal-header, .scanner-header) .btn-ghost {
+  min-height: 36px;
+  border-color: rgb(244 238 230 / 0.6);
+  color: var(--cream);
+  background: transparent;
+}
+
+body :is(.kiosk-header, .dash-header, .portal-header, .scanner-header) .btn-ghost:hover {
+  background: var(--cream);
+  color: var(--wine);
+}
+
+body :is(.dash-user, .portal-user) {
+  color: var(--cream-2);
+}
+
+body .kiosk-header .kiosk-free {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  color: var(--cream);
+}
+
+body .kiosk-header .kiosk-free[data-full] {
+  font-style: italic;
+  color: var(--cream);
+}
+
+/* Big numbers on working screens use the display serif, like the public hero. */
+body .dash-stat-value {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+body .dash-stat-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}

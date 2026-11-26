@@ -131,6 +131,7 @@ public class WaitlistService implements SeatHoldSource {
             .filter(e -> e.getStatus() == WaitlistStatus.OFFERED)
             .orElseThrow(WaitlistException::noOffer);
         SeatHold hold = holds.findByStudentIdAndStatus(studentId, SeatHold.ACTIVE)
+            .filter(h -> !h.getExpiresAt().isBefore(time.now())) // ran out; expireHolds() passes it on shortly
             .orElseThrow(WaitlistException::noOffer);
         Instant until = time.now().plus(holdLength);
         entry.accept(until);
