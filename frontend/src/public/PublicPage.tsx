@@ -11,6 +11,7 @@ import type { Floor, SeatState, SeatStates } from '../shared/layout'
 import { useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
 import { LegalFooter } from '../legal/LegalPage'
+import LibraryStack from './LibraryStack'
 import './public.css'
 
 // Public availability site (WORKPLAN B1.4). View only: seats are given out at
@@ -152,34 +153,35 @@ export default function PublicPage() {
             )}
           </div>
 
-          {availability && (
-            <ol className="hero-floors" aria-label="Floors">
-              {availability.floors.map((f, i) => (
-                <li key={f.id}>
-                  <button
-                    type="button"
-                    className="hero-floor"
-                    aria-current={f.id === floorId ? 'true' : undefined}
-                    data-full={f.full || undefined}
-                    onClick={() => pickFloor(f.id)}
-                  >
-                    <span className="hero-floor-num">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="hero-floor-name">{f.name}</span>
-                    <span className="hero-floor-count">
-                      {f.full ? 'Full' : f.free}
-                      <small>{f.full ? ` ${f.total} seats` : ` of ${f.total}`}</small>
-                    </span>
-                    <span className="hero-floor-bar" aria-hidden="true">
-                      <span style={{ width: `${f.total ? ((f.total - f.free) / f.total) * 100 : 0}%` }} />
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ol>
+          {availability && floors && (
+            <LibraryStack floors={floors} availability={availability} selected={floorId} onPick={pickFloor} />
           )}
         </div>
 
         <p className="hero-foot">View only. Seats are given out when you scan your ID card at the entrance.</p>
+      </section>
+
+      <section className="facts" aria-label="How the library works, in numbers">
+        <div>
+          <span className="facts-num">{availability?.total ?? 568}</span>
+          <span className="facts-label">seats across the library</span>
+        </div>
+        <div>
+          <span className="facts-num">4</span>
+          <span className="facts-label">floors, each with its own map</span>
+        </div>
+        <div>
+          <span className="facts-num">
+            30<small>min</small>
+          </span>
+          <span className="facts-label">a break keeps your seat, twice a day</span>
+        </div>
+        <div>
+          <span className="facts-num">
+            15<small>min</small>
+          </span>
+          <span className="facts-label">a freed seat is held for the next in line</span>
+        </div>
       </section>
 
       <section id="floor-plan" className="plan">

@@ -84,7 +84,7 @@
 .hero-body {
   flex: 1;
   display: grid;
-  grid-template-columns: auto minmax(0, 1.25fr) minmax(280px, 0.9fr);
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.05fr);
   align-items: center;
   gap: clamp(var(--space-5), 4vw, var(--space-8));
   padding: var(--space-7) 0 var(--space-5);
@@ -144,87 +144,148 @@
   margin-top: var(--space-3);
 }
 
-/* The floor index on the right: numbered like a menu. */
-.hero-floors {
-  list-style: none;
+/* The 3D floor stack on the right: the library itself, drawn from the real plans. */
+.stack {
   margin: 0;
-  padding: 0;
-  border-top: 1px solid rgb(244 238 230 / 0.25);
-}
-
-.hero-floors li {
-  border-bottom: 1px solid rgb(244 238 230 / 0.25);
-}
-
-.hero-floor {
-  width: 100%;
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
-  grid-template-areas:
-    'num name count'
-    'num bar bar';
-  align-items: baseline;
-  column-gap: var(--space-3);
-  row-gap: var(--space-2);
-  padding: var(--space-4) var(--space-2);
-  background: none;
-  border: 0;
-  color: var(--cream);
-  text-align: left;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.stack-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.plate {
   cursor: pointer;
-  transition: background-color 150ms ease;
+  outline: none;
+  transition: transform 220ms ease;
 }
 
-.hero-floor:hover,
-.hero-floor[aria-current='true'] {
-  background: rgb(244 238 230 / 0.07);
+.plate:hover,
+.plate:focus-visible {
+  transform: translateY(-6px);
 }
 
-.hero-floor-num {
-  grid-area: num;
+.plate-slab {
+  fill: #6b1a2b;
+  stroke: rgb(244 238 230 / 0.5);
+  stroke-width: 0.06;
+}
+
+.plate[data-current] .plate-slab {
+  fill: #7d2335;
+  stroke: var(--cream);
+  stroke-width: 0.09;
+}
+
+.plate:focus-visible .plate-slab {
+  stroke: var(--cream);
+  stroke-width: 0.12;
+}
+
+.plate-edge {
+  fill: #2c0710;
+  stroke: rgb(244 238 230 / 0.22);
+  stroke-width: 0.06;
+}
+
+.plate-room {
+  fill: rgb(0 0 0 / 0.12);
+  stroke: rgb(244 238 230 / 0.2);
+  stroke-width: 0.05;
+}
+
+.plate-table {
+  fill: rgb(233 201 160 / 0.32);
+}
+
+.plate-seat {
+  fill: var(--cream);
+  transition: fill 400ms ease, opacity 400ms ease;
+}
+
+.plate-seat.seat-TAKEN,
+.plate-seat.seat-ON_BREAK {
+  fill: rgb(20 4 8 / 0.45);
+}
+
+.plate-seat.seat-HELD {
+  fill: #b9cbe3;
+}
+
+.plate-seat.seat-OUT_OF_SERVICE {
+  fill: transparent;
+}
+
+.plate-leader {
+  stroke: rgb(244 238 230 / 0.45);
+  stroke-width: 1;
+}
+
+.plate-num {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.125rem;
-  color: var(--cream-2);
+  font-size: 18px;
+  fill: var(--cream-2);
 }
 
-.hero-floor-name {
-  grid-area: name;
-  font-size: 0.8125rem;
+.plate-name {
+  font-family: var(--font-sans);
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  fill: var(--cream);
 }
 
-.hero-floor-count {
-  grid-area: count;
+.plate-count {
   font-family: var(--font-display);
-  font-size: 2rem;
-  line-height: 1;
+  font-size: 22px;
+  fill: var(--cream);
   font-variant-numeric: lining-nums tabular-nums;
 }
 
-.hero-floor-count small {
-  font-family: var(--font-sans);
+.plate[data-current] .plate-count,
+.plate[data-current] .plate-name {
+  fill: #fff;
+}
+
+.stack-key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
   font-size: 0.75rem;
+  letter-spacing: 0.06em;
   color: var(--cream-2);
 }
 
-.hero-floor[data-full] .hero-floor-count {
-  font-style: italic;
+.stack-key-free,
+.stack-key-taken {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: var(--space-2);
 }
 
-.hero-floor-bar {
-  grid-area: bar;
-  height: 2px;
-  background: rgb(244 238 230 / 0.18);
-}
-
-.hero-floor-bar span {
-  display: block;
-  height: 100%;
+.stack-key-free {
   background: var(--cream);
-  transition: width 400ms ease;
+  margin-left: 0;
+}
+
+.stack-key-taken {
+  background: rgb(20 4 8 / 0.55);
+  outline: 1px solid rgb(244 238 230 / 0.3);
+}
+
+.stack-key-note {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.9375rem;
+  letter-spacing: 0;
 }
 
 .hero-foot {
@@ -232,6 +293,51 @@
   border-top: 1px solid rgb(244 238 230 / 0.18);
   font-size: 0.8125rem;
   color: var(--cream-2);
+}
+
+/* ---------------------------------------------------------------- facts band */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0 clamp(16px, 4vw, 56px);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.facts > div {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5);
+}
+
+.facts > div + div {
+  border-left: 1px solid var(--line);
+}
+
+.facts-num {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+}
+
+.facts-num small {
+  margin-left: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.facts-label {
+  max-width: 22ch;
+  font-size: 0.875rem;
+  color: var(--ink-2);
 }
 
 /* ---------------------------------------------------------------- sections */
@@ -368,6 +474,18 @@
 /* ---------------------------------------------------------------- small screens */
 
 @media (max-width: 960px) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .facts > div:nth-child(3) {
+    border-left: 0;
+  }
+  .facts > div:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .stack {
+    max-width: 560px;
+  }
   .hero-body {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
@@ -385,6 +503,24 @@
 }
 
 @media (max-width: 640px) {
+  .facts > div {
+    padding: var(--space-5) var(--space-3);
+  }
+  .stack-key-note {
+    margin-left: 0;
+    width: 100%;
+  }
+  /* The drawing scales down on phones: keep the labels readable. */
+  .plate-name {
+    display: none;
+  }
+  .plate-num {
+    font-size: 24px;
+    transform: translateY(-14px);
+  }
+  .plate-count {
+    font-size: 36px;
+  }
   .hero {
     min-height: auto;
   }
