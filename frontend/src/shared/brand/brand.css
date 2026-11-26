@@ -1,0 +1,139 @@
+/* ---------------------------------------------------------------- logo */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+}
+
+.logo-words {
+  display: grid;
+  line-height: 1;
+}
+
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.logo-place {
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.875rem;
+  color: var(--cream-2);
+}
+
+.logo-mark {
+  flex: none;
+  display: block;
+}
+
+.logo-tile {
+  fill: var(--wine);
+}
+
+.logo-seat {
+  fill: var(--cream);
+}
+
+.logo-table {
+  fill: var(--wood-gold);
+}
+
+.logo-yours {
+  fill: var(--gold);
+}
+
+/* On cream backgrounds the seats switch to wine. */
+.logo-on-light .logo-seat {
+  fill: var(--wine);
+}
+
+/* ---------------------------------------------------------------- splash */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--wine);
+  color: var(--cream);
+  cursor: pointer;
+  transition: transform 650ms cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.splash[data-phase='leave'] {
+  transform: translateY(-100%);
+}
+
+.splash-inner {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.splash-name {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1;
+  opacity: 0;
+  animation: splash-rise 600ms 900ms ease-out forwards;
+}
+
+.splash-place {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cream-2);
+  opacity: 0;
+  animation: splash-rise 600ms 1050ms ease-out forwards;
+}
+
+.logo-mark-animated .logo-seat {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: seat-in 320ms calc(120ms + var(--i) * 110ms) ease-out forwards;
+}
+
+.logo-mark-animated .logo-table {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: table-in 420ms 200ms ease-out forwards;
+}
+
+.logo-mark-animated .logo-yours {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: yours-in 420ms 780ms cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+}
+
+@keyframes seat-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes table-in {
+  to { transform: scaleX(1); }
+}
+
+@keyframes yours-in {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes splash-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}

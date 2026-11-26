@@ -16,8 +16,13 @@ body :is(.kiosk-header, .dash-header, .portal-header) .brand {
   gap: var(--space-3);
 }
 
+/* The SeatSense mark (the favicon drawing) in place of the old square. */
 body :is(.kiosk-header, .dash-header, .portal-header) .brand-mark {
-  display: none;
+  width: 30px;
+  height: 30px;
+  align-self: center;
+  border-radius: 0;
+  background: url('/favicon.svg') center / contain no-repeat;
 }
 
 body :is(.kiosk-header, .dash-header, .portal-header) .brand-name,

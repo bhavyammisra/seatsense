@@ -11,6 +11,7 @@ RUN npm run build
 # The Maven image already has Maven, so the build does not depend on the wrapper's download.
 FROM maven:3.9-eclipse-temurin-21 AS api
 WORKDIR /app/backend
+COPY docker/maven-settings.xml /root/.m2/settings.xml
 COPY backend/ ./
 COPY --from=web /app/frontend/dist/ src/main/resources/static/
 RUN mvn -q -B -DskipTests package
