@@ -120,7 +120,11 @@ Things to know about the free plan:
 
 The site has a privacy policy at `/privacy` and terms at `/terms`, linked from the public page. Set a strong `SAMPLE_PASSWORD`: anyone on the internet can reach the login.
 
-Every push to `main` redeploys automatically.
+The live demo runs at https://seatsense-8gqa.onrender.com (Shefali's Render workspace).
+
+Render only redeploys on its own when its GitHub app can see this repository. This repository belongs to Bhavyam's account, so until he installs Render's GitHub app on it, start each deploy from the service's page in the Render dashboard (Manual Deploy, then Deploy latest commit).
+
+The Docker build downloads Maven dependencies from Google's mirror of Maven Central (`docker/maven-settings.xml`), because Maven Central rate-limits Render's shared build servers.
 
 ## Demo script
 
