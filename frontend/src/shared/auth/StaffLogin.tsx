@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { Logo } from '../brand/Logo'
+import '../brand/brand.css'
 import { fetchMe, login, logout, type Me, type Role } from '../api/authApi'
 import { reconnectLive } from '../live/live'
 import './staff-login.css'
@@ -122,12 +124,14 @@ export function LoginFrame({ title, children }: { title: string; children: React
   return (
     <div className="staff-login">
       <aside className="staff-login-band">
-        <Link to="/" className="staff-login-wordmark">
-          SeatSense
-          <span>Nava Nalanda Library</span>
+        <Link to="/" className="staff-login-wordmark" aria-label="SeatSense home">
+          <Logo />
         </Link>
         <h1>{title}.</h1>
-        <p className="staff-login-band-foot">Sample accounts only. Not an official Thapar service.</p>
+        <p className="staff-login-band-foot">
+          <img src="/thapar-logo.jpg" alt="Thapar Institute of Engineering and Technology" width="44" height="39" />
+          <span>A course project at Thapar Institute. Sample accounts only.</span>
+        </p>
       </aside>
       <main className="staff-login-side">{children}</main>
     </div>

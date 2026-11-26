@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ApiUnavailable,
   fetchAvailability,
@@ -12,6 +12,9 @@ import { useLive } from '../shared/live/live'
 import SeatMap, { SeatLegend } from '../shared/seatmap/SeatMap'
 import { LegalFooter } from '../legal/LegalPage'
 import LibraryStack from './LibraryStack'
+import LampArt from './LampArt'
+import Splash from '../shared/brand/Splash'
+import { Logo } from '../shared/brand/Logo'
 import './public.css'
 
 // Public availability site (WORKPLAN B1.4). View only: seats are given out at
@@ -80,11 +83,11 @@ export default function PublicPage() {
 
   return (
     <div className="public">
+      <Splash />
       <section className="hero">
         <header className="site-nav">
-          <a className="wordmark" href="/">
-            SeatSense
-            <span>Nava Nalanda Library</span>
+          <a className="wordmark" href="/" aria-label="SeatSense home">
+            <Logo />
           </a>
           <nav aria-label="Main">
             <a href="#floor-plan">Floor plan</a>
@@ -113,9 +116,12 @@ export default function PublicPage() {
             ) : availability.full ? (
               <>
                 <h1 className="hero-title">
-                  The library
-                  <br />
-                  is full.
+                  <span className="rise" style={{ '--d': 0 } as React.CSSProperties}>
+                    The library
+                  </span>
+                  <span className="rise" style={{ '--d': 1 } as React.CSSProperties}>
+                    is full.
+                  </span>
                 </h1>
                 <p className="hero-sub">
                   All {availability.total} seats are taken. Join the waitlist and the first seat that frees up is
@@ -133,9 +139,14 @@ export default function PublicPage() {
             ) : (
               <>
                 <h1 className="hero-title">
-                  <span className="hero-count">{availability.free}</span>
-                  <br />
-                  seats free.
+                  <span className="rise" style={{ '--d': 0 } as React.CSSProperties}>
+                    <span className="hero-count">
+                      <CountUp value={availability.free} />
+                    </span>
+                  </span>
+                  <span className="rise" style={{ '--d': 1 } as React.CSSProperties}>
+                    seats free.
+                  </span>
                 </h1>
                 <p className="hero-sub">
                   of {availability.total} across four floors, updated{' '}
@@ -223,7 +234,8 @@ export default function PublicPage() {
         </div>
       </section>
 
-      <section id="how" className="how">
+      <section id="how" className="how-band">
+        <div className="how">
         <div className="section-head">
           <p className="eyebrow">03 / How it works</p>
           <h2>From the gate to your seat.</h2>
@@ -250,9 +262,34 @@ export default function PublicPage() {
             <p>When every seat is taken, join the waitlist. The first seat that frees up is held for you for 15 minutes.</p>
           </li>
         </ol>
+        </div>
+        <LampArt className="how-art" />
       </section>
 
       <LegalFooter />
     </div>
   )
+}
+
+/** Counts up to the number the first time it appears, then follows live changes. */
+function CountUp({ value }: { value: number }) {
+  const [shown, setShown] = useState(0)
+  const from = useRef(0)
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const start = performance.now()
+    const begin = from.current
+    const length = reduce ? 0 : begin === 0 ? 1100 : 400
+    let frame = 0
+    const tick = (now: number) => {
+      const t = length === 0 ? 1 : Math.min(1, (now - start) / length)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setShown(Math.round(begin + (value - begin) * eased))
+      if (t < 1) frame = requestAnimationFrame(tick)
+      else from.current = value
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [value])
+  return <>{shown}</>
 }

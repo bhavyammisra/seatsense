@@ -99,3 +99,17 @@
 .legal-footer a {
   color: var(--ink-2);
 }
+
+.legal-footer-thapar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  line-height: 1.5;
+}
+
+.legal-footer-thapar img {
+  flex: none;
+  padding: 4px;
+  background: #fff;
+  border-radius: 2px;
+}

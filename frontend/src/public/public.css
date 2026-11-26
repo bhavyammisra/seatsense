@@ -29,24 +29,8 @@
 }
 
 .wordmark {
-  display: grid;
   color: var(--cream);
   text-decoration: none;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.01em;
-}
-
-.wordmark span {
-  margin-top: 4px;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 0.875rem;
-  letter-spacing: 0.02em;
-  color: var(--cream-2);
 }
 
 .site-nav nav {
@@ -109,7 +93,17 @@
 }
 
 .hero .eyebrow {
-  color: var(--cream-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--gold);
+}
+
+.hero .eyebrow::before {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: var(--gold);
 }
 
 .hero-title {
@@ -126,7 +120,45 @@
 }
 
 .hero-count {
+  color: var(--gold);
   font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Headline lines rise into place once, one after the other. */
+.hero-title .rise {
+  display: block;
+  animation: rise-in 800ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(300ms + var(--d) * 140ms);
+}
+
+.hero-sub,
+.hero-actions {
+  animation: rise-in 700ms 650ms ease-out both;
+}
+
+/* Starts hidden only inside the animation, so the text shows even where animations do not run. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+}
+
+/* The floors drop into the stack one by one. */
+.stack-svg .plate {
+  animation: plate-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.stack-svg .plate:nth-child(1) { animation-delay: 350ms; }
+.stack-svg .plate:nth-child(2) { animation-delay: 500ms; }
+.stack-svg .plate:nth-child(3) { animation-delay: 650ms; }
+.stack-svg .plate:nth-child(4) { animation-delay: 800ms; }
+
+@keyframes plate-in {
+  from {
+    opacity: 0;
+    transform: translateY(-36px);
+  }
 }
 
 .hero-sub {
@@ -177,7 +209,7 @@
 
 .plate[data-current] .plate-slab {
   fill: #7d2335;
-  stroke: var(--cream);
+  stroke: var(--gold);
   stroke-width: 0.09;
 }
 
@@ -203,7 +235,7 @@
 }
 
 .plate-seat {
-  fill: var(--cream);
+  fill: #f6e7c8;
   transition: fill 400ms ease, opacity 400ms ease;
 }
 
@@ -221,7 +253,7 @@
 }
 
 .plate-leader {
-  stroke: rgb(244 238 230 / 0.45);
+  stroke: rgb(227 176 75 / 0.7);
   stroke-width: 1;
 }
 
@@ -229,7 +261,7 @@
   font-family: var(--font-display);
   font-style: italic;
   font-size: 18px;
-  fill: var(--cream-2);
+  fill: var(--gold);
 }
 
 .plate-name {
@@ -271,7 +303,7 @@
 }
 
 .stack-key-free {
-  background: var(--cream);
+  background: #f6e7c8;
   margin-left: 0;
 }
 
@@ -415,8 +447,36 @@
   color: var(--ink-2);
 }
 
-.how {
-  padding-top: var(--space-8);
+.how-band {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+  align-items: end;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+  padding: 0 clamp(16px, 4vw, 56px);
+  background: var(--forest);
+  color: var(--cream);
+}
+
+.how-band .how {
+  max-width: none;
+  margin: 0;
+  padding: var(--space-8) 0 var(--space-7);
+}
+
+.how-band .eyebrow {
+  color: var(--gold);
+}
+
+.how-band .section-head h2 {
+  color: var(--cream);
+}
+
+.how-art {
+  width: 100%;
+  height: auto;
+  padding-bottom: var(--space-7);
 }
 
 .how-steps {
@@ -424,8 +484,8 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid var(--ink);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgb(244 238 230 / 0.5);
 }
 
 .how-steps li {
@@ -435,16 +495,20 @@
   padding: var(--space-5) var(--space-5) var(--space-5) 0;
 }
 
-.how-steps li + li {
+.how-steps li:nth-child(even) {
   padding-left: var(--space-5);
-  border-left: 1px solid var(--line);
+  border-left: 1px solid rgb(244 238 230 / 0.18);
+}
+
+.how-steps li:nth-child(n + 3) {
+  border-top: 1px solid rgb(244 238 230 / 0.18);
 }
 
 .how-num {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.75rem;
-  color: var(--accent);
+  font-size: 2rem;
+  color: var(--gold);
 }
 
 .how-steps h3 {
@@ -454,13 +518,13 @@
 }
 
 .how-steps p {
-  color: var(--ink-2);
+  color: var(--cream-2);
   line-height: 1.6;
 }
 
 /* The legal footer sits on a deep wine band here. */
 .public .legal-footer {
-  margin-top: var(--space-8);
+  margin-top: 0;
   padding: var(--space-6) clamp(16px, 4vw, 56px);
   background: var(--wine-deep);
   border-top: 0;
@@ -493,12 +557,12 @@
   .hero-rail {
     display: none;
   }
-  .how-steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .how-band {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .how-steps li:nth-child(3) {
-    padding-left: 0;
-    border-left: 0;
+  .how-art {
+    max-width: 380px;
+    padding-top: 0;
   }
 }
 
@@ -539,7 +603,7 @@
     padding-top: var(--space-6);
   }
   .plan,
-  .how {
+  .how-band .how {
     padding-top: var(--space-7);
   }
   .plan-map {
@@ -549,9 +613,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .how-steps li,
-  .how-steps li + li {
+  .how-steps li:nth-child(even),
+  .how-steps li:nth-child(n + 3) {
     padding: var(--space-4) 0;
     border-left: 0;
-    border-bottom: 1px solid var(--line);
+    border-top: 0;
+    border-bottom: 1px solid rgb(244 238 230 / 0.18);
   }
 }

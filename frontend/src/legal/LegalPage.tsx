@@ -31,7 +31,14 @@ function LegalLayout({ title, children }: { title: string; children: ReactNode }
 export function LegalFooter() {
   return (
     <footer className="legal-footer">
-      <span>SeatSense, a student course project. Not an official Thapar service.</span>
+      <span className="legal-footer-thapar">
+        <img src="/thapar-logo.jpg" alt="Thapar Institute of Engineering and Technology" width="52" height="46" />
+        <span>
+          A course project at Thapar Institute of Engineering and Technology, Patiala.
+          <br />
+          SeatSense is not an official Thapar service.
+        </span>
+      </span>
       <nav aria-label="Legal">
         <Link to="/privacy">Privacy</Link>
         <Link to="/terms">Terms</Link>
@@ -44,8 +51,8 @@ export function PrivacyPage() {
   return (
     <LegalLayout title="Privacy policy">
       <p>
-        SeatSense is a course project for Enterprising Web Applications at Thapar Institute, built by two students,
-        Shefali and Bhavyam. It is a demonstration, not a service run by the Nava Nalanda library. The online demo
+        SeatSense is a course project for Enterprising Web Applications at Thapar Institute, built by three students,
+        Shefali, Bhavyam and Tushita Jindal. It is a demonstration, not a service run by the Nava Nalanda library. The online demo
         holds <strong>sample data only</strong>: made-up students and ID cards marked SAMPLE. Do not enter real
         personal details.
       </p>
