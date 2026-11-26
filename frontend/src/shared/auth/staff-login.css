@@ -16,22 +16,9 @@
 }
 
 .staff-login-wordmark {
-  display: grid;
   width: fit-content;
   color: var(--cream);
   text-decoration: none;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.staff-login-wordmark span {
-  margin-top: 4px;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: var(--cream-2);
 }
 
 .staff-login-band h1 {
@@ -43,8 +30,17 @@
 }
 
 .staff-login-band-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   font-size: 0.8125rem;
   color: var(--cream-2);
+}
+
+.staff-login-band-foot img {
+  padding: 4px;
+  background: #fff;
+  border-radius: 2px;
 }
 
 .staff-login-side {

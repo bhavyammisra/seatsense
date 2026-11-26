@@ -28,6 +28,8 @@ class SpaRoutesTest extends PostgresIntegrationTest {
     void builtAssetsNeedNoLogin() throws Exception {
         // No frontend build in tests, so the file is missing: 404, not a login error
         mvc.perform(get("/assets/index.js")).andExpect(status().isNotFound());
+        mvc.perform(get("/thapar-logo.jpg")).andExpect(status().isNotFound());
+        mvc.perform(get("/favicon.svg")).andExpect(status().isNotFound());
     }
 
     @Test

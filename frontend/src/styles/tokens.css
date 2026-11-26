@@ -62,6 +62,13 @@
   --cream: #f4eee6;
   --cream-2: #d9c9b8;
 
+  /* Reading-room accents: brass lamp gold, table wood and library green */
+  --gold: #e3b04b;
+  --gold-deep: #b5852f;
+  --wood-gold: #c9965a;
+  --forest: #173a2f;
+  --forest-2: #1f4a3c;
+
   color-scheme: light;
 }
 

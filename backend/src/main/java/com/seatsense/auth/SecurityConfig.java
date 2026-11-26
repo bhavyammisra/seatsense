@@ -44,7 +44,7 @@ public class SecurityConfig {
                 // /ws: the socket handshake; who may subscribe to what is checked per message (WebSocketSecurityConfig)
                 .requestMatchers("/api/public/**", "/api/auth/login", "/actuator/health", "/error", "/ws").permitAll()
                 // The built React app on the hosted demo (SpaRoutes). Each page asks for a login itself where needed.
-                .requestMatchers(HttpMethod.GET, "/", "/index.html", "/assets/**", "/favicon.svg").permitAll()
+                .requestMatchers(HttpMethod.GET, "/", "/index.html", "/assets/**", "/*.svg", "/*.jpg", "/*.png").permitAll()
                 .requestMatchers(HttpMethod.GET, SpaRoutes.PAGES).permitAll()
                 .requestMatchers("/api/gate/**", "/api/sessions/**").hasRole(Role.GATE.name())
                 .requestMatchers("/api/admin/**", "/api/sim/**").hasRole(Role.LIBRARIAN.name())
