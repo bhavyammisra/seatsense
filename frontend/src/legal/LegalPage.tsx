@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './legal.css'
 
 const UPDATED = '26 November 2026'
-const REPO = 'https://github.com/bhavyammisra/seatsense'
+const REPO = 'https://github.com/bhavyammisra/seatsense-java-project'
 
 function LegalLayout({ title, children }: { title: string; children: ReactNode }) {
   return (
