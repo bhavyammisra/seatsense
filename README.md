@@ -1,6 +1,92 @@
 # SeatSense
 
-Live library seat finder for our Enterprising Web Applications (Java) course project. The full idea is in [docs/PROJECT.md](docs/PROJECT.md) and who builds what is in [docs/WORKPLAN.md](docs/WORKPLAN.md).
+[![CI](https://github.com/bhavyammisra/seatsense-java-project/actions/workflows/ci.yml/badge.svg)](https://github.com/bhavyammisra/seatsense-java-project/actions/workflows/ci.yml)
+
+A live seat finder for a university library, built on Spring Boot and React for our Enterprising Web Applications (Java) course.
+
+In exam season our library fills up by the afternoon. Students walk through all four floors and leave without a seat, and nobody can tell from outside whether there is space. SeatSense works from the ID card scan the library already has at its entrance. Scanning in gives you a seat, scanning out frees it, so the system always knows which seats are free and can show that to everyone, live.
+
+![Public page: live free seats per floor](docs/screenshots/public.png)
+
+All students, cards, accounts and history in this repo are **sample data**, never real people.
+
+## What it does
+
+**At the gate**
+- A phone camera reads the student's ID barcode. The kiosk says "Welcome", shows every floor's seat map and lets them tap a seat.
+- "Best seat for me" ranks free seats by the student's preferences. Untouched for 10 seconds, the kiosk assigns the best one so the queue keeps moving.
+- "Sit together" finds 2 to 4 free seats side by side for friends who scan in together.
+- Scanning out asks "Leaving" or "Break (30 min)". A break holds the seat and frees it automatically if the student does not return.
+
+**For students**
+- A public, view-only page shows free seats per floor, updated the moment anything changes. Booking from a hostel room is deliberately not possible.
+- When a floor is full: a waitlist that offers the next freed seat with a timed hold, and an alert for "tell me when Floor N has 5+ free seats".
+- "Seats usually free up around 7:30 pm", worked out from past weeks of occupancy.
+
+**For library staff**
+- A dashboard with live headcount and occupancy per floor, and seats that can be taken out of service.
+- Analytics: busiest hours by weekday, most-used seats, and how often students saw the library full.
+- A fire-drill list of everyone inside, floor by floor, that prints for the assembly point.
+- An entrance display board for a TV by the door.
+
+| Dashboard | Entrance display |
+|---|---|
+| ![Librarian dashboard](docs/screenshots/dashboard.png) | ![Entrance display board](docs/screenshots/display.png) |
+
+![Busiest hours heatmap from sample data](docs/screenshots/heatmap.png)
+
+## The Java worth reading
+
+| What | Where | How |
+|---|---|---|
+| One seat, one person | [`ConcurrencyProofTest`](backend/src/test/java/com/seatsense/session/ConcurrencyProofTest.java) | Partial unique indexes in Postgres guarantee one open session per seat and per student. The test sends 200 threads at one seat: exactly one wins. |
+| No seat both held and taken | [`SeatHoldRaceTest`](backend/src/test/java/com/seatsense/waitlist/SeatHoldRaceTest.java) | The waitlist locks the seat row (`PESSIMISTIC_WRITE`) before offering it, so a hold and a gate scan cannot both win. |
+| Best seat for me | [`BestSeatRanker`](backend/src/main/java/com/seatsense/allocation/BestSeatRanker.java) | Scores every free seat on how many of the student's wishes it meets (power, window, quiet zone), how quiet its neighbours are, how far the walk is, and whether it was their last seat. A bounded `PriorityQueue` keeps only the top few. |
+| Sit together | [`GroupSeatFinder`](backend/src/main/java/com/seatsense/allocation/GroupSeatFinder.java) | Same row first, then same table, then a breadth-first search over neighbouring seats. All seats are taken in one transaction. |
+| Seat states | [`SeatStateMachine`](backend/src/main/java/com/seatsense/session/SeatStateMachine.java) | FREE, HELD, TAKEN, ON_BREAK and OUT_OF_SERVICE, with every legal move listed and everything else refused. |
+| Waitlist | [`WaitlistService`](backend/src/main/java/com/seatsense/waitlist/WaitlistService.java) | A first-in, first-out queue. A freed seat goes to the head of the queue as a 15-minute hold, then passes on if not taken. |
+| Predictions | [`PredictionService`](backend/src/main/java/com/seatsense/analytics/PredictionService.java) | Averages free seats per 15-minute slot on the same weekday over the last 4 weeks and finds the first later slot with 5 or more. With no history it says nothing rather than guess. |
+| Live updates | [`CoalescingThrottle`](backend/src/main/java/com/seatsense/analytics/CoalescingThrottle.java) | Domain events go out over STOMP WebSockets. During a rush, availability updates are merged so screens get at most two a second, and the last change is never lost. |
+| Time | [`TimeProvider`](backend/src/main/java/com/seatsense/common/TimeProvider.java) | All time goes through one injectable clock, so tests use fixed times and the demo can fast-forward 30 minutes. |
+| Exam rush | [`SimulatorService`](backend/src/main/java/com/seatsense/simulator/SimulatorService.java) | Dev-only: fills the library floor by floor like an exam evening, and writes 4 weeks of sample history labelled as sample. |
+
+Every behaviour has a test. `./mvnw verify` runs over 200 of them, most against a real Postgres started by Testcontainers, and CI runs them on every pull request.
+
+## Tech stack
+
+| Layer | Choice |
+|---|---|
+| Backend | Java 21, Spring Boot 3.5 (Web, Data JPA, Security, WebSocket, Validation, Scheduling) |
+| Database | PostgreSQL 16, schema in Flyway migrations |
+| Live updates | STOMP over WebSocket |
+| Frontend | React, TypeScript, Vite |
+| Tests | JUnit 5, Spring Boot Test, Testcontainers |
+| Build and CI | Maven wrapper, GitHub Actions |
+| Hosting | Docker image on Render (see "Hosted demo") |
+
+```
+ Phone scanner page ─┐
+ Gate kiosk ─────────┤        ┌──────────────────────────────┐
+ Public site ────────┼─HTTP──▶│  Spring Boot backend         │──▶ PostgreSQL
+ Student portal ─────┤◀──WS───│  gate · session · allocation │
+ Librarian dashboard ┘        │  waitlist · analytics · auth │
+                              │  simulator (dev only)        │
+                              └──────────────────────────────┘
+```
+
+## Repository layout
+
+```
+backend/     Spring Boot app: one Java package per module (gate, session, allocation, waitlist, analytics, ...)
+frontend/    React app: one folder per screen (kiosk, scanner, public, portal, dashboard, display, cards)
+docs/        PROJECT.md (the full design), WORKPLAN.md (who built what), api.md (the API), decisions.md
+Dockerfile   Builds the frontend into the Spring Boot jar, one image for everything
+render.yaml  The hosted demo: one web service and a Postgres database
+```
+
+## Team
+
+Built by **Shefali** and **Bhavyam Misra**. [docs/WORKPLAN.md](docs/WORKPLAN.md) records who owned which module and every task, phase by phase. [docs/PROJECT.md](docs/PROJECT.md) has the full design: the problem, the decisions behind it, the data model and the algorithms.
 
 ## Run the backend
 
